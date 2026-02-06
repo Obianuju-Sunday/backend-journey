@@ -39,7 +39,17 @@ app.post('/todos', (req,res) => {
   res.status(201).json(newTodo);
 })
 
-
+app.get('/todos/:id', (req,res) => {
+  const todoID = req.params.id;
+  const convertedTodoID = Number(todoID);
+  console.log(convertedTodoID);
+  const todo = todos.find(todo => todo.id === convertedTodoID);
+  if (todo) {
+    res.status(200).json(todo)
+  }else{
+    res.status(404).json('Todo not found')
+  }
+})
 
 
 
@@ -62,7 +72,7 @@ app.get('/', (req, res) => {
 
 // todos route
 app.get('/todos', (req,res) => {
-    res.json(todos);
+    res.status(200).json(todos);
 })
 
 const PORT = 3000;
