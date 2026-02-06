@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-
+app.use(express.json());
 
 // TODO: Create a route to get all todos
 var todos = [
@@ -27,7 +27,17 @@ var todos = [
 ]
 
 
-
+app.post('/todos', (req,res) => {
+  const { title, isCompleted } = req.body;
+  const newId = todos.length + 1;
+  const newTodo = {
+    id: newId,
+    title,
+    isCompleted
+  };
+  todos.push(newTodo);
+  res.status(201).json(newTodo);
+})
 
 
 
