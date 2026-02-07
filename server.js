@@ -39,7 +39,6 @@ app.get("/todos", (req, res) => {
 
 app.get("/todos/:id", (req, res) => {
   const todoID = Number(req.params.id);
-  console.log(todoID);
   const todo = todos.find(todo => todo.id === todoID);
   if (todo) {
     res.status(200).json(todo)
@@ -50,7 +49,7 @@ app.get("/todos/:id", (req, res) => {
 
 app.post("/todos", (req, res) => {
   const { title, isCompleted } = req.body;
-  if(!title  || !isCompleted) {
+  if(!title  || typeof isCompleted !== 'boolean') {
     return res.status(400).json({ message: "Title and isCompleted are required" });
   }
   const newId = todos.length > 0 ? Math.max(...todos.map(t => t.id)) + 1 : 1; 
@@ -65,7 +64,7 @@ app.post("/todos", (req, res) => {
 
 app.put("/todos/:id", (req, res) => {
   const { title, isCompleted } = req.body;
-  if(!title  || !isCompleted) {
+  if(!title  || typeof isCompleted !== 'boolean') {
     return res.status(400).json({ message: "Title and isCompleted are required" });
   }
   const todoID = Number(req.params.id);
