@@ -1,35 +1,59 @@
-const express = require('express');
+const express = require("express");
 const app = express();
+const PORT = 3000;
 app.use(express.json());
 
-// TODO: Create a route to get all todos
-var todos = [
+
+const todos = [
   {
     id: 1,
-    title: 'Buy groceries',
+    title: "Buy groceries",
     isCompleted: false
   },
   {
     id: 2,
-    title: 'Walk the dog',
+    title: "Walk the dog",
     isCompleted: true
   },
   {
     id: 3,
-    title: 'Read a book',
+    title: "Read a book",
     isCompleted: false
   },
   {
     id: 4,
-    title: 'Write code/ Do day 2 challenge of my backend glow up journey',
+    title: "Write code/ Do day 2 challenge of my backend glow up journey",
     isCompleted: true
   }
 ]
 
+// Root route
+app.get("/", (req, res) => {
+  res.json({ message: "My backend journey starts now" });
+});
 
-app.post('/todos', (req, res) => {
+// todos route
+app.get("/todos", (req, res) => {
+  res.status(200).json(todos);
+})
+
+app.get("/todos/:id", (req, res) => {
+  const todoID = Number(req.params.id);
+  console.log(todoID);
+  const todo = todos.find(todo => todo.id === todoID);
+  if (todo) {
+    res.status(200).json(todo)
+  } else {
+    res.status(404).json({ message: "Todo not found" })
+  }
+})
+
+app.post("/todos", (req, res) => {
   const { title, isCompleted } = req.body;
-  const newId = todos.length + 1;
+  if(!title  || !isCompleted) {
+    return res.status(400).json({ message: "Title and isCompleted are required" });
+  }
+  const newId = todos.length > 0 ? Math.max(...todos.map(t => t.id)) + 1 : 1; 
   const newTodo = {
     id: newId,
     title,
@@ -39,65 +63,33 @@ app.post('/todos', (req, res) => {
   res.status(201).json(newTodo);
 })
 
-app.get('/todos/:id', (req, res) => {
-  const todoID = req.params.id;
-  const convertedTodoID = Number(todoID);
-  console.log(convertedTodoID);
-  const todoIndex = todos.find(todo => todo.id === convertedTodoID);
-  if (todoIndex) {
-    res.status(200).json(todoIndex)
-  } else {
-    res.status(404).json('Todo not found')
-  }
-})
-
-app.put('/todos/:id', (req, res) => {
+app.put("/todos/:id", (req, res) => {
   const { title, isCompleted } = req.body;
-  const todoID = req.params.id;
-  const convertedID = Number(todoID);
-  const todoIndex = todos.find(todo => todo.id === convertedID);
-  if (todoIndex) {
-    todoIndex.title = title;
-    todoIndex.isCompleted = isCompleted;
-    res.status(200).json(todoIndex);
+  if(!title  || !isCompleted) {
+    return res.status(400).json({ message: "Title and isCompleted are required" });
+  }
+  const todoID = Number(req.params.id);
+  const todo = todos.find(todo => todo.id === todoID);
+  if (todo) {
+    todo.title = title;
+    todo.isCompleted = isCompleted;
+    res.status(200).json(todo);
   } else {
-    res.status(404).json('Todo not found')
+    res.status(404).json({ message: "Todo not found" });
   }
 })
 
-app.delete('/todos/:id', (req, res) => {
-  const todoID = req.params.id;
-  const convertedID = Number(todoID);
-  const todoIndex = todos.findIndex(todo => todo.id === convertedID);
+app.delete("/todos/:id", (req, res) => {
+  const todoID = Number(req.params.id);
+  const todoIndex = todos.findIndex(todo => todo.id === todoID);
   if (todoIndex !== -1) {
     todos.splice(todoIndex, 1);
-    res.status(200).json("Todo deleted successfully");
+    res.status(200).json({ message: "Todo deleted successfully" });
   } else {
-    res.status(404).json('Todo not found')
+    res.status(404).json({ message: "Todo not found" });
   }
 })
 
-
-
-
-
-
-
-
-
-
-
-// Root route
-app.get('/', (req, res) => {
-  res.json({ message: 'My backend journey starts now' });
-});
-
-// todos route
-app.get('/todos', (req, res) => {
-  res.status(200).json(todos);
-})
-
-const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
