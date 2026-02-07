@@ -51,7 +51,19 @@ app.get('/todos/:id', (req,res) => {
   }
 })
 
-
+app.put('/todos/:id', (req,res) => {
+  const { title, isCompleted } = req.body;
+  const todoID = req.params.id;
+  const convertedID = Number(todoID);
+  const todo = todos.find(todo => todo.id === convertedID);
+  if(todo){
+      todo.title = title;
+  todo.isCompleted = isCompleted;
+  res.status(200).json(todo);
+  } else{
+    res.status(404).json('Todo not found')
+  }
+})
 
 
 
