@@ -29,7 +29,9 @@ const todos = [
 
 // Root route
 app.get("/", (req, res) => {
-  res.json({ message: "My backend journey starts now" });
+  res.status(200).json({ 
+    message: "My backend journey starts now" 
+  });
 });
 
 // todos route
@@ -39,18 +41,22 @@ app.get("/todos", (req, res) => {
 
 app.get("/todos/:id", (req, res) => {
   const todoID = Number(req.params.id);
-  const todo = todos.find(todo => todo.id === todoID);
+  const todo = todos.find(singleTodo => singleTodo.id === todoID);
   if (todo) {
     res.status(200).json(todo)
   } else {
-    res.status(404).json({ message: "Todo not found" })
+    res.status(404).json({ 
+      message: "Todo not found" 
+    })
   }
 })
 
 app.post("/todos", (req, res) => {
   const { title, isCompleted } = req.body;
   if(!title  || typeof isCompleted !== 'boolean') {
-    return res.status(400).json({ message: "Title and isCompleted are required" });
+    return res.status(400).json({ 
+      message: "Title and isCompleted are required" 
+    });
   }
   const newId = todos.length > 0 ? Math.max(...todos.map(t => t.id)) + 1 : 1; 
   const newTodo = {
@@ -65,7 +71,9 @@ app.post("/todos", (req, res) => {
 app.put("/todos/:id", (req, res) => {
   const { title, isCompleted } = req.body;
   if(!title  || typeof isCompleted !== 'boolean') {
-    return res.status(400).json({ message: "Title and isCompleted are required" });
+    return res.status(400).json({ 
+      message: "Title and isCompleted are required" 
+    });
   }
   const todoID = Number(req.params.id);
   const todo = todos.find(todo => todo.id === todoID);
@@ -74,7 +82,9 @@ app.put("/todos/:id", (req, res) => {
     todo.isCompleted = isCompleted;
     res.status(200).json(todo);
   } else {
-    res.status(404).json({ message: "Todo not found" });
+    res.status(404).json({ 
+      message: "Todo not found" 
+    });
   }
 })
 
@@ -83,9 +93,13 @@ app.delete("/todos/:id", (req, res) => {
   const todoIndex = todos.findIndex(todo => todo.id === todoID);
   if (todoIndex !== -1) {
     todos.splice(todoIndex, 1);
-    res.status(200).json({ message: "Todo deleted successfully" });
+    res.status(200).json({ 
+      message: "Todo deleted successfully" 
+    });
   } else {
-    res.status(404).json({ message: "Todo not found" });
+    res.status(404).json({ 
+      message: "Todo not found" 
+    });
   }
 })
 
