@@ -47,7 +47,7 @@ app.post("/todos", (req, res) => {
     })
   }
 
-  pool.query("INSERT INTO todos (title, is_completed) VALUES ($1, $2) RETURNING *", [trimmedTitle, completed], (err, result) => {
+  pool.query("INSERT INTO todos (title, completed) VALUES ($1, $2) RETURNING *", [trimmedTitle, completed], (err, result) => {
 
     if (err) {
       return res.status(500).json({
@@ -102,7 +102,7 @@ app.put("/todos/:id", (req, res) => {
     })
   }
 
-  pool.query("UPDATE todos SET title = $1, is_completed = $2 WHERE id = $3 RETURNING *", [title, completed, todoID], (err, result) => {
+  pool.query("UPDATE todos SET title = $1, completed = $2 WHERE id = $3 RETURNING *", [title, completed, todoID], (err, result) => {
     if (err) {
       return res.status(500).json({
         error: err.message
