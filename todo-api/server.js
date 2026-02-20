@@ -7,7 +7,7 @@ app.use(express.json());
 
 // Root route
 app.get("/", (req, res) => {
-  res.status(200).json({
+  return res.status(200).json({
     message: "My backend journey starts now"
   });
 });
@@ -17,31 +17,44 @@ app.get("/", (req, res) => {
 app.get("/todos", (req, res) => {
   pool.query("SELECT * FROM todos ORDER BY id", (err, result) => {
     if (err) {
-      res.status(500).json({
+      return res.status(500).json({
         error: err.message
       })
     } else {
-      res.status(200).json(result.rows)
+      return res.status(200).json(result.rows)
     }
   })
 })
 
 app.post("/todos", (req, res) => {
   const { title, completed } = req.body;
-  if (!title || typeof completed !== 'boolean') {
-    res.status(400).json({
-      message: "Both fields are required."
+  const trimmedTitle = title?.trim();
+
+  // Validation check before hitting the DB
+  if (!trimmedTitle || trimmedTitle.length === 0) {
+    return res.status(404).json({
+      message: "Title is required and can't be empty."
+    })
+  }
+  if (trimmedTitle.length > 255) {
+    return res.status(400).json({
+      message: "Title too long."
+    })
+  }
+  if (typeof completed !== 'boolean') {
+    return res.status(400).json({
+      message: "Is completed is required and must be a boolean variable"
     })
   }
 
-  pool.query("INSERT INTO todos (title, is_completed) VALUES ($1, $2) RETURNING *", [title, completed], (err, result) => {
+  pool.query("INSERT INTO todos (title, is_completed) VALUES ($1, $2) RETURNING *", [trimmedTitle, completed], (err, result) => {
 
     if (err) {
-      res.status(500).json({
+      return res.status(500).json({
         error: err.message
       })
     } else {
-      res.status(201).json(result.rows[0])
+      return res.status(201).json(result.rows[0])
     }
   })
 })
@@ -52,45 +65,58 @@ app.get("/todos/:id", (req, res) => {
 
   pool.query("SELECT * FROM todos WHERE id = $1", [todoID], (err, result) => {
     if (err) {
-      res.status(500).json({
+      return res.status(500).json({
         error: err.message
       })
     }
     if (result.rows.length === 0) {
-      res.status(404).json({
+      return res.status(404).json({
         message: "Todo not found."
       })
     }
-    res.status(200).json(result.rows[0])
+    return res.status(200).json(result.rows[0])
   })
 })
 
 
 app.put("/todos/:id", (req, res) => {
   const { title, completed } = req.body;
+  const trimmedTitle = title?.trim();
   const todoID = Number(req.params.id);
 
-  if (!title || typeof completed !== 'boolean') {
+  if (!trimmedTitle || trimmedTitle.length === 0) {
     return res.status(400).json({
-      message: "Title and completed are required"
+      message: "Title is required and can't be empty."
     });
   }
 
+  if (trimmedTitle.length > 255) {
+    return res.status(400).json({
+      message: "Title too long."
+    })
+  }
+
+  if (typeof completed !== 'boolean') {
+    return res.status(400).json({
+      message: "Completed must be a boolean!"
+    })
+  }
+
   pool.query("UPDATE todos SET title = $1, is_completed = $2 WHERE id = $3 RETURNING *", [title, completed, todoID], (err, result) => {
-    if(err){
-      res.status(500).json({
+    if (err) {
+      return res.status(500).json({
         error: err.message
       });
     }
-    if(result.rows.length === 0){
-      res.status(404).json({
+    if (result.rows.length === 0) {
+      return res.status(404).json({
         message: "Todo not found."
       })
     }
-    res.status(200).json({
+    return res.status(200).json({
       message: "Todo updated successfully.",
       updatedTodo: result.rows[0]
-  })
+    })
   })
 })
 
@@ -98,17 +124,17 @@ app.delete("/todos/:id", (req, res) => {
   const todoID = Number(req.params.id);
 
   pool.query("DELETE FROM todos WHERE id = $1 RETURNING *", [todoID], (err, result) => {
-    if(err){
-      res.status(500).json({
+    if (err) {
+      return res.status(500).json({
         error: err.message
       })
     }
-    if(result.rows.length === 0){
-      res.status(404).json({
+    if (result.rows.length === 0) {
+      return res.status(404).json({
         message: "Todo not found."
       })
     }
-    res.status(200).json({
+    return res.status(200).json({
       message: "Todo deleted successfully.",
       deletedTodo: result.rows[0]
     })

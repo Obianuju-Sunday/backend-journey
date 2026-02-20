@@ -10,12 +10,18 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-// pool.query('SELECT NOW()', (err, res) => {
-//   if (err) {
-//     console.log('Database connection failed:', err);
-//   } else {
-//     console.log('Database connected! Current time:', res.rows[0].now);
-//   }
-// });
+pool.on("error", (err) => {
+  console.error("Unexpected database error:", err)
+})
+
+pool.connect((err, client, release) =>{
+  if(err){
+    console.log("Failed to connect to the database:", err);
+    process.exit(1);
+  } else{
+    console.log("Database Connected!")
+    release()
+  }
+})
 
 module.exports = pool;
