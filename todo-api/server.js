@@ -1,106 +1,118 @@
 const express = require("express");
+const pool = require("./db")
 const app = express();
 const PORT = 3000;
 app.use(express.json());
 
 
-const todos = [
-  {
-    id: 1,
-    title: "Buy groceries",
-    isCompleted: false
-  },
-  {
-    id: 2,
-    title: "Walk the dog",
-    isCompleted: true
-  },
-  {
-    id: 3,
-    title: "Read a book",
-    isCompleted: false
-  },
-  {
-    id: 4,
-    title: "Write code/ Do day 2 challenge of my backend glow up journey",
-    isCompleted: true
-  }
-]
-
 // Root route
 app.get("/", (req, res) => {
-  res.status(200).json({ 
-    message: "My backend journey starts now" 
+  res.status(200).json({
+    message: "My backend journey starts now"
   });
 });
 
 // todos route
-app.get("/todos", (req, res) => {
-  res.status(200).json(todos);
-})
 
-app.get("/todos/:id", (req, res) => {
-  const todoID = Number(req.params.id);
-  const todo = todos.find(singleTodo => singleTodo.id === todoID);
-  if (todo) {
-    res.status(200).json(todo)
-  } else {
-    res.status(404).json({ 
-      message: "Todo not found" 
-    })
-  }
+app.get("/todos", (req, res) => {
+  pool.query("SELECT * FROM todos ORDER BY id", (err, result) => {
+    if (err) {
+      res.status(500).json({
+        error: err.message
+      })
+    } else {
+      res.status(200).json(result.rows)
+    }
+  })
 })
 
 app.post("/todos", (req, res) => {
-  const { title, isCompleted } = req.body;
-  if(!title  || typeof isCompleted !== 'boolean') {
-    return res.status(400).json({ 
-      message: "Title and isCompleted are required" 
-    });
+  const { title, completed } = req.body;
+  if (!title || typeof completed !== 'boolean') {
+    res.status(400).json({
+      message: "Both fields are required."
+    })
   }
-  const newId = todos.length > 0 ? Math.max(...todos.map(t => t.id)) + 1 : 1; 
-  const newTodo = {
-    id: newId,
-    title,
-    isCompleted
-  };
-  todos.push(newTodo);
-  res.status(201).json(newTodo);
+
+  pool.query("INSERT INTO todos (title, is_completed) VALUES ($1, $2) RETURNING *", [title, completed], (err, result) => {
+
+    if (err) {
+      res.status(500).json({
+        error: err.message
+      })
+    } else {
+      res.status(201).json(result.rows[0])
+    }
+  })
 })
 
-app.put("/todos/:id", (req, res) => {
-  const { title, isCompleted } = req.body;
-  if(!title  || typeof isCompleted !== 'boolean') {
-    return res.status(400).json({ 
-      message: "Title and isCompleted are required" 
-    });
-  }
+
+app.get("/todos/:id", (req, res) => {
   const todoID = Number(req.params.id);
-  const todo = todos.find(todo => todo.id === todoID);
-  if (todo) {
-    todo.title = title;
-    todo.isCompleted = isCompleted;
-    res.status(200).json(todo);
-  } else {
-    res.status(404).json({ 
-      message: "Todo not found" 
+
+  pool.query("SELECT * FROM todos WHERE id = $1", [todoID], (err, result) => {
+    if (err) {
+      res.status(500).json({
+        error: err.message
+      })
+    }
+    if (result.rows.length === 0) {
+      res.status(404).json({
+        message: "Todo not found."
+      })
+    }
+    res.status(200).json(result.rows[0])
+  })
+})
+
+
+app.put("/todos/:id", (req, res) => {
+  const { title, completed } = req.body;
+  const todoID = Number(req.params.id);
+
+  if (!title || typeof completed !== 'boolean') {
+    return res.status(400).json({
+      message: "Title and completed are required"
     });
   }
+
+  pool.query("UPDATE todos SET title = $1, is_completed = $2 WHERE id = $3 RETURNING *", [title, completed, todoID], (err, result) => {
+    if(err){
+      res.status(500).json({
+        error: err.message
+      });
+    }
+    if(result.rows.length === 0){
+      res.status(404).json({
+        message: "Todo not found."
+      })
+    }
+    res.status(200).json({
+      message: "Todo updated successfully.",
+      updatedTodo: result.rows[0]
+  })
+  })
 })
 
 app.delete("/todos/:id", (req, res) => {
   const todoID = Number(req.params.id);
-  const todoIndex = todos.findIndex(todo => todo.id === todoID);
-  if (todoIndex !== -1) {
-    todos.splice(todoIndex, 1);
-    res.status(200).json({ 
-      message: "Todo deleted successfully" 
-    });
-  } else {
-    res.status(404).json({ 
-      message: "Todo not found" 
-    });
-  }
+
+  pool.query("DELETE FROM todos WHERE id = $1 RETURNING *", [todoID], (err, result) => {
+    if(err){
+      res.status(500).json({
+        error: err.message
+      })
+    }
+    if(result.rows.length === 0){
+      res.status(404).json({
+        message: "Todo not found."
+      })
+    }
+    res.status(200).json({
+      message: "Todo deleted successfully.",
+      deletedTodo: result.rows[0]
+    })
+  })
 })
 
 app.listen(PORT, () => {
