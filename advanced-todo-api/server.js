@@ -1,10 +1,14 @@
 const pool = require("./src/config/db"); 
 require("dotenv").config();
 const express = require("express");
-const userRoutes = require("./src/routes/userRoutes")
 const app = express();
+const helmet = require("helmet");
+const userRoutes = require("./src/routes/userRoutes")
+const authLimiter = require("./src/middleware/rateLimiter")
+
 app.use(express.json());
-app.use("/auth", userRoutes);
+app.use(helmet());
+app.use("/auth", authLimiter, userRoutes);
 
 app.get("/", (req, res) => {
     return res.status(200).json({
