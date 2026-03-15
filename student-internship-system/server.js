@@ -1,17 +1,27 @@
+
+// server.js - Main entry point for the Student Internship System backend
+// This file sets up the Express server, connects to the database, and defines routes.
 require('dotenv').config();
 const express = require('express');
 const pool = require('./src/config/db');
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', './src/views');
 
+// Routes
+const authRoutes = require('./src/routes/authRoutes');
+app.use('/auth', authRoutes);
+
+// Basic route to check if server is running
 app.get('/', (req, res) => {
   res.send('Internship System - Ready!');
 });
 
+// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
