@@ -93,7 +93,7 @@
     
     <div class="container">
         <div class="welcome-card">
-            <h1>Welcome, <span id="userName"></span>! 👋</h1>
+            <h1>Welcome, <span id="userName"></span>!</h1>
             <p>Explore internship opportunities below</p>
         </div>
         
@@ -103,15 +103,49 @@
         </div>
     </div>
 
-    <script>
-        // Get user from localStorage
+<script>
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user) window.location.href = '/auth/login';
         
         document.getElementById('userName').textContent = user.email;
         
-        // TODO: Fetch internships from API (we'll build this next)
-        document.getElementById('internshipsList').innerHTML = '<p style="color: white;">No internships available yet. Check back soon!</p>';
+        // Fetch internships
+        async function loadInternships() {
+            try {
+                const response = await fetch('/internship/all');
+                const data = await response.json();
+                
+                const container = document.getElementById('internshipsList');
+                
+                if (data.internships.length === 0) {
+                    container.innerHTML = '<p style="color: white;">No internships available yet.</p>';
+                    return;
+                }
+                
+                container.innerHTML = data.internships.map(int => `
+                    <div class="internship-card">
+                        <h3>${int.title}</h3>
+                        <p class="company">🏢 ${int.company_name} • ${int.industry}</p>
+                        <p><strong>📍 Location:</strong> ${int.location}</p>
+                        ${int.duration ? `<p><strong>⏱️ Duration:</strong> ${int.duration}</p>` : ''}
+                        ${int.stipend ? `<p><strong>💰 Stipend:</strong> ${int.stipend}</p>` : ''}
+                        <p style="margin-top: 10px;">${int.description.substring(0, 150)}...</p>
+                        <button class="apply-btn" onclick="applyToInternship(${int.id})">Apply Now</button>
+                    </div>
+                `).join('');
+                
+            } catch (err) {
+                console.error(err);
+                document.getElementById('internshipsList').innerHTML = '<p style="color: white;">Error loading internships</p>';
+            }
+        }
+        
+        function applyToInternship(id) {
+            alert('Application feature coming soon! Internship ID: ' + id);
+            // We'll build this next if time allows
+        }
+        
+        loadInternships();
     </script>
 </body>
 </html>
