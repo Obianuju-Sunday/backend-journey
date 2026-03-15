@@ -18,8 +18,9 @@ app.use('/auth', authRoutes);
 
 // Basic route to check if server is running
 app.get('/', (req, res) => {
-  res.send('Internship System - Ready!');
-});
+  // res.send('Internship System - Ready!');
+  res.render('home'); 
+}); 
 
 // Start the server
 const PORT = process.env.PORT || 3000;
