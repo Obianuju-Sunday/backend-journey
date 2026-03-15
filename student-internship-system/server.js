@@ -16,6 +16,9 @@ app.set('views', './src/views');
 const authRoutes = require('./src/routes/authRoutes');
 app.use('/auth', authRoutes);
 
+const dashboardRoutes = require('./src/routes/dashboardRoutes');
+app.use('/', dashboardRoutes);
+
 // Basic route to check if server is running
 app.get('/', (req, res) => {
   // res.send('Internship System - Ready!');
