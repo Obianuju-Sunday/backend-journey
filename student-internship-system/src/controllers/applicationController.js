@@ -70,7 +70,7 @@ const getMyApplications = async (req, res) => {
        WHERE a.student_id = $1
        ORDER BY a.applied_at DESC`,
       [studentId]
-    );
+    ); 
     
     res.status(200).json({ applications: applications.rows });
     

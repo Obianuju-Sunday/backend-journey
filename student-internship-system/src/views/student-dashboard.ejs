@@ -193,7 +193,7 @@
 
     <div class="container">
         <div class="welcome-card">
-            <h1>Welcome, <span id="userName"></span>! 👋</h1>
+            <h1>Welcome, <span id="userName"></span>!</h1>
             <p>Explore internship opportunities below</p>
         </div>
 
@@ -231,8 +231,19 @@
 
         if (!user) window.location.href = '/auth/login';
 
-        document.getElementById('userName').textContent = user.email;
-
+        // Fetch student profile to get actual name
+        async function loadProfile() {
+            try {
+                const response = await fetch('/student/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                document.getElementById('userName').textContent = data.full_name || user.email;
+            } catch (err) {
+                document.getElementById('userName').textContent = user.email;
+            }
+        }
+        loadProfile();
         // Load internships
         async function loadInternships() {
             try {
@@ -312,7 +323,7 @@
 
         function showApplications() {
             alert('My Applications page coming up!');
-            // We'll build this if time allows
+            // Will build this if time allows
         }
 
         loadInternships();
