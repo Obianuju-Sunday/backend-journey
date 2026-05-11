@@ -68,7 +68,6 @@ npm install
 
 Create a `.env` file:
 ```bash 
-DATABASE_URL=your_postgresql_connection_string
 DB_USER=your_db_username
 DB_HOST=localhost
 DB_NAME=your_database_name
