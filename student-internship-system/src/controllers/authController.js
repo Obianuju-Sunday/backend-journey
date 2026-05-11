@@ -94,7 +94,7 @@ const login = async (req, res) => {
 
   try {
     const userQuery = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    
+
     if (userQuery.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -109,7 +109,11 @@ const login = async (req, res) => {
 
     // Generate token
     const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role },
+      { 
+        userId: user.id, 
+        email: user.email, 
+        role: user.role 
+      },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -133,17 +137,17 @@ const login = async (req, res) => {
 // Get student profile
 const getStudentProfile = async (req, res) => {
   const userId = req.user.userId;
-  
+
   try {
     const profile = await pool.query(
       'SELECT * FROM student_profiles WHERE user_id = $1',
       [userId]
     );
-    
+
     if (profile.rows.length === 0) {
       return res.status(404).json({ error: 'Profile not found' });
     }
-    
+
     res.status(200).json(profile.rows[0]);
   } catch (err) {
     console.error(err);
@@ -154,17 +158,17 @@ const getStudentProfile = async (req, res) => {
 // Get organization profile
 const getOrgProfile = async (req, res) => {
   const userId = req.user.userId;
-  
+
   try {
     const profile = await pool.query(
       'SELECT * FROM organization_profiles WHERE user_id = $1',
       [userId]
     );
-    
+
     if (profile.rows.length === 0) {
       return res.status(404).json({ error: 'Profile not found' });
     }
-    
+
     res.status(200).json(profile.rows[0]);
   } catch (err) {
     console.error(err);

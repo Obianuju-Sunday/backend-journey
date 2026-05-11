@@ -181,7 +181,16 @@
                 <button type="submit" class="submit-btn">Post Internship</button>
                 <div id="message"></div>
             </form>
+            <!-- Applications Section -->
+            <div style="margin-top: 40px;">
+                <h2 style="color: red; margin-bottom: 20px;">📋 Internship Applications</h2>
+                <div id="applicationsList" style="background: white; padding: 30px; border-radius: 15px;">
+                    <p>Loading applications...</p>
+                </div>
+            </div>
         </div>
+    </div>
+    </div>
     </div>
 
     <script>
@@ -202,7 +211,7 @@
             }
         }
         loadProfile();
-        
+
         // Check approval status
         if (!user.approved) {
             document.getElementById('approvalNotice').innerHTML = `
@@ -247,6 +256,77 @@
                 document.getElementById('message').textContent = 'Error connecting to server';
             }
         });
+
+        // Load applications
+        async function loadApplications() {
+            try {
+                const response = await fetch('/application/organization/applications', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await response.json();
+                const container = document.getElementById('applicationsList');
+                
+                if (data.applications.length === 0) {
+                    container.innerHTML = '<p style="color: #666;">No applications yet.</p>';
+                    return;
+                }
+                
+                container.innerHTML = data.applications.map(app => `
+                    <div style="border: 2px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 10px;">
+                        <h3 style="color: #f5576c; margin-bottom: 10px;">${app.internship_title}</h3>
+                        <p><strong>👤 Student:</strong> ${app.full_name}</p>
+                        <p><strong>📧 Email:</strong> ${app.student_email}</p>
+                        <p><strong>🎓 Program:</strong> ${app.program} ${app.university ? '@ ' + app.university : ''}</p>
+                        ${app.phone ? `<p><strong>📱 Phone:</strong> ${app.phone}</p>` : ''}
+                        ${app.portfolio_link ? `<p><strong>🔗 Portfolio:</strong> <a href="${app.portfolio_link}" target="_blank">${app.portfolio_link}</a></p>` : ''}
+                        ${app.cover_letter ? `<p><strong>✉️ Cover Letter:</strong><br><em>${app.cover_letter}</em></p>` : ''}
+                        <p><strong>📅 Applied:</strong> ${new Date(app.applied_at).toLocaleDateString()}</p>
+                        <p><strong>Status:</strong> <span style="color: ${app.status === 'accepted' ? 'green' : app.status === 'rejected' ? 'red' : 'orange'}; font-weight: bold;">${app.status.toUpperCase()}</span></p>
+                        
+                        ${app.status === 'pending' ? `
+                            <div style="margin-top: 15px;">
+                                <button onclick="updateStatus(${app.id}, 'accepted')" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-right: 10px; cursor: pointer;">✅ Accept</button>
+                                <button onclick="updateStatus(${app.id}, 'rejected')" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">❌ Reject</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+                
+            } catch (err) {
+                console.error(err);
+                document.getElementById('applicationsList').innerHTML = '<p style="color: red;">Error loading applications</p>';
+            }
+        }
+        
+        async function updateStatus(appId, status) {
+            try {
+                const response = await fetch('/application/update-status', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ application_id: appId, status: status })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(result.message);
+                    loadApplications(); // Reload to show updated status
+                } else {
+                    alert(result.error);
+                }
+            } catch (err) {
+                alert('Error updating application');
+            }
+        }
+        
+        // Load applications on page load
+        if (user.approved) {
+            loadApplications();
+        }
     </script>
 </body>
 
