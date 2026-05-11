@@ -69,13 +69,20 @@ npm install
 Create a `.env` file:
 ```bash 
 DATABASE_URL=your_postgresql_connection_string
+DB_USER=your_db_username
+DB_HOST=localhost
+DB_NAME=your_database_name
+DB_PASSWORD=your_db_password
+DB_PORT=5432
 JWT_SECRET=your_secret_key
 PORT=3000
+NODE_ENV=development
+
 ```
 
 4. Run the application
 ```bash
-npm start
+npm run dev
 ```
 
 5. Open http://localhost:3000
