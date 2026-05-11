@@ -76,8 +76,8 @@ DB_PORT=5432
 JWT_SECRET=your_secret_key
 PORT=3000
 NODE_ENV=development
-
 ```
+    The project supports both individual PostgreSQL config variables and DATABASE_URL for production deployment environments.
 
 4. Run the application
 ```bash
