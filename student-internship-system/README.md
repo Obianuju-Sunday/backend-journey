@@ -68,16 +68,10 @@ npm install
 
 Create a `.env` file:
 ```bash 
-DB_USER=your_db_username
-DB_HOST=localhost
-DB_NAME=your_database_name
-DB_PASSWORD=your_db_password
-DB_PORT=5432
+DATABASE_URL=your_db_url
 JWT_SECRET=your_secret_key
 PORT=3000
 NODE_ENV=development
-```
-    The project supports both individual PostgreSQL config variables and DATABASE_URL for production deployment environments.
 
 4. Run the application
 ```bash
