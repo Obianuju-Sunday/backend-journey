@@ -72,6 +72,7 @@ DATABASE_URL=your_db_url
 JWT_SECRET=your_secret_key
 PORT=3000
 NODE_ENV=development
+```
 
 4. Run the application
 ```bash
