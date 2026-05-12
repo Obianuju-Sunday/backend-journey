@@ -73,6 +73,8 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            localStorage.clear();
             
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerStudent, registerOrganization, login } = require('../controllers/authController');
+const { registerStudent, registerOrganization, login, getStudentProfile, getOrgProfile } = require('../controllers/authController');
 const { studentRegisterValidator, orgRegisterValidator, loginValidator } = require('../middleware/validators');
 
 
@@ -25,5 +25,9 @@ router.post('/register/organization', orgRegisterValidator, registerOrganization
 
 // Login (both types)
 router.post('/login', loginValidator, login);
+
+// Profiles
+router.get('/profile/student', getStudentProfile);
+router.get('/profile/organization',  getOrgProfile);
 
 module.exports = router;
