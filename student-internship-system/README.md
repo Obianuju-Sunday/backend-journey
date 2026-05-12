@@ -2,7 +2,7 @@
 
 A full-stack web application connecting students with internship opportunities. Built with Node.js, Express, PostgreSQL, and EJS.
 
-🔗 **Live Demo:** https://internship-system-j3su.onrender.com/student/dashboard
+🔗 **Live Demo:** https://internship-system-j3su.onrender.com
 
 ![App Homepage](images/homepage.png)
 
