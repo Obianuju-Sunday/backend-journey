@@ -73,7 +73,7 @@ JWT_SECRET=your_secret_key
 PORT=3000
 NODE_ENV=development
 ```
-4. ## Database Setup
+4. Database Setup
 
 This project uses PostgreSQL.
 
