@@ -74,6 +74,7 @@
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // clear local storage on login
             localStorage.clear();
             
             const formData = new FormData(e.target);
