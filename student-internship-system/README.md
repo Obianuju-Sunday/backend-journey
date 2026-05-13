@@ -73,13 +73,24 @@ JWT_SECRET=your_secret_key
 PORT=3000
 NODE_ENV=development
 ```
+4. ## Database Setup
 
-4. Run the application
+This project uses PostgreSQL.
+
+After creating your database, import the schema file to create all required tables:
+
+```bash
+psql -U your_username -d your_database_name -f schema.sql
+```
+
+The `schema.sql` file contains all database tables and relationships required for the application to function properly.
+
+5. Run the application
 ```bash
 npm run dev
 ```
 
-5. Open http://localhost:3000
+6. Open http://localhost:3000
 
 ##  Screenshots
 
