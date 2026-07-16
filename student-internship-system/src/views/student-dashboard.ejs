@@ -32,12 +32,11 @@
         .nav-links a {
             margin-left: 20px;
             text-decoration: none;
-            color: #667eea;
             font-weight: 600;
         }
 
         .logout-btn {
-            background: #dc3545;
+            background: #667eea;
             color: white;
             padding: 10px 25px;
             border: none;
@@ -184,16 +183,16 @@
 
 <body>
     <nav class="navbar">
-        <h2>🎓 Student Portal</h2>
+        <h2>Student Portal</h2>
         <div class="nav-links">
-            <a href="#" onclick="showApplications()">My Applications</a>
+            <a href="#" style="color: #667eea;" onclick="showApplications()">My Applications</a>
             <a href="/" class="logout-btn" onclick="localStorage.clear()">Logout</a>
         </div>
     </nav>
 
     <div class="container">
         <div class="welcome-card">
-            <h1>Welcome, <span id="userName"></span>!</h1>
+            <h1>Welcome, <span id="userName"></span></h1>
             <p>Explore internship opportunities below</p>
         </div>
 
@@ -261,9 +260,9 @@
                     <div class="internship-card">
                         <h3>${int.title}</h3>
                         <p class="company">🏢 ${int.company_name} • ${int.industry}</p>
-                        <p><strong>📍 Location:</strong> ${int.location}</p>
-                        ${int.duration ? `<p><strong>⏱️ Duration:</strong> ${int.duration}</p>` : ''}
-                        ${int.stipend ? `<p><strong>💰 Stipend:</strong> ${int.stipend}</p>` : ''}
+                        <p><strong>Location:</strong> ${int.location}</p>
+                        ${int.duration ? `<p><strong>Duration:</strong> ${int.duration}</p>` : ''}
+                        ${int.stipend ? `<p><strong>Stipend:</strong> ${int.stipend}</p>` : ''}
                         <p style="margin-top: 10px;">${int.description.substring(0, 150)}...</p>
                         <button class="apply-btn" onclick="openApplyModal(${int.id}, '${int.title.replace(/'/g, "\\'")}')">Apply Now</button>                    </div>
                 `).join('');

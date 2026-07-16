@@ -57,8 +57,8 @@ const registerOrganization = async (req, res) => {
     const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (userExists.rows.length > 0) {
       return res.status(409).json({ error: 'Email already registered' });
-    }
-
+    } 
+ 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 

@@ -62,9 +62,49 @@ const getAllInternships = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
+}; 
+
+// Delete internship
+const deleteInternship = async (req, res) => {
+  const internshipId = req.params.id;
+  const userId = req.user.userId;
+
+  try {
+    // Get organization profile ID
+    const orgProfile = await pool.query(
+      'SELECT id FROM organization_profiles WHERE user_id = $1',
+      [userId]
+    );
+
+    if (orgProfile.rows.length === 0) {
+      return res.status(404).json({ error: 'Organization profile not found' });
+    }
+
+    const organizationId = orgProfile.rows[0].id;
+
+    // Check if the internship belongs to the organization
+    const internship = await pool.query(
+      'SELECT * FROM internships WHERE id = $1 AND organization_id = $2',
+      [internshipId, organizationId]
+    );
+
+    if (internship.rows.length === 0) {
+      return res.status(404).json({ error: 'Internship not found or does not belong to your organization' });
+    }
+
+    // Delete the internship
+    await pool.query('DELETE FROM internships WHERE id = $1', [internshipId]);
+
+    res.status(200).json({ message: 'Internship deleted successfully' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
 };
 
 module.exports = {
   createInternship,
-  getAllInternships
+  getAllInternships,
+  deleteInternship
 };
