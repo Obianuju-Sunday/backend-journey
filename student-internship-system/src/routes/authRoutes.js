@@ -1,33 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { registerStudent, registerOrganization, login, getStudentProfile, getOrgProfile } = require('../controllers/authController');
+const { registerStudent, registerOrganization, login, logout, getCurrentUser } = require('../controllers/authController');
 const { studentRegisterValidator, orgRegisterValidator, loginValidator } = require('../middleware/validators');
+const { authMiddleware } = require('../middleware/auth');
 
-
-// GET routes to show forms
-router.get('/register-student', (req, res) => {
-  res.render('student-register');
-});
-
-router.get('/register-organization', (req, res) => {
-  res.render('org-register');
-});
-
-router.get('/login', (req, res) => {
-  res.render('login');
-});
-
-// Student registration
+// Registration
 router.post('/register/student', studentRegisterValidator, registerStudent);
-
-// Organization registration
 router.post('/register/organization', orgRegisterValidator, registerOrganization);
 
-// Login (both types)
+// Login/logout
 router.post('/login', loginValidator, login);
+router.post('/logout', authMiddleware, logout);
 
-// Profiles
-router.get('/profile/student', getStudentProfile);
-router.get('/profile/organization',  getOrgProfile);
+// Get current user info
+router.get('/me', authMiddleware, getCurrentUser);
+
 
 module.exports = router;

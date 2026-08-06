@@ -14,17 +14,20 @@ app.set('views', './src/views');
 
 // Routes
 const authRoutes = require('./src/routes/authRoutes');
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 
-const dashboardRoutes = require('./src/routes/dashboardRoutes');
-app.use('/', dashboardRoutes);
+const userRoutes = require('./src/routes/userRoutes');
+app.use('/api/users', userRoutes);
 
 const internshipRoutes = require('./src/routes/internshipRoutes');
-app.use('/internship', internshipRoutes);
+app.use('/api/internship', internshipRoutes);
 
 const applicationRoutes = require('./src/routes/applicationRoutes');
-app.use('/application', applicationRoutes);
- 
+app.use('/api/application', applicationRoutes);
+
+const skillRoutes = require('./src/routes/skillRoutes');
+app.use('/api/skills', skillRoutes);
+
 // Basic route to check if server is running
 app.get('/', (req, res) => {
   // res.send('Internship System - Ready!');

@@ -133,7 +133,7 @@
     <nav class="navbar">
         <h2>Organization Portal</h2>
         <div class="nav-links">
-            <a href="#" style="color: #f5576c;" onclick="showApplications">Dashboard</a>
+            <a href="/internship/org" style="color: #f5576c;" id="dashboardLink">Dashboard</a>
             <a href="/" class="logout-btn" onclick="localStorage.clear()">Logout</a>
         </div>
 
@@ -307,7 +307,7 @@
                         
                         ${app.status === 'pending' ? `
                             <div style="margin-top: 15px;">
-                                    <button onclick="return confirm('Are you sure you want to delete this application?');" method="POST" type="submit" onclick="deleteApplication(${app.id})">Delete</button>
+                                <button onclick="return confirm('Are you sure you want to delete this application?');" method="POST" type="submit" onclick="deleteApplication(${app.id})">Delete</button>
 
                                 <button onclick="updateStatus(${app.id}, 'accepted')" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-right: 10px; cursor: pointer;">Accept</button>
                                 <button onclick="updateStatus(${app.id}, 'rejected')" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Reject</button>
@@ -373,9 +373,35 @@
             loadApplications();
         }
 
-        function showApplications() {
-            document.getElementById('postForm').scrollIntoView({ behavior: 'smooth' });
-        }
+        document.getElementById("dashboardLink").addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            const token = localStorage.getItem("token");
+
+            try {
+                const response = await fetch("/internship/org", {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const html = await response.text();
+
+                document.open();
+                document.write(html);
+                document.close();
+
+                if (!response.ok) {
+                    console.log("Failed to access dashboard.")
+                }
+            } catch (error) {
+                console.error("Error loading dashboard", error)
+            }
+
+
+        })
+
     </script>
 </body>
 

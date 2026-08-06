@@ -11,7 +11,7 @@ router.post('/apply', authMiddleware, applyToInternship);
 // Get my applications
 router.get('/my-applications', authMiddleware, getMyApplications);
 
-// Org routes (add these at the bottom before module.exports)
+// Org routes
 router.get('/organization/applications', authMiddleware, isOrganization, getOrgApplications);
 router.put('/update-status', authMiddleware, isOrganization, updateApplicationStatus);
 

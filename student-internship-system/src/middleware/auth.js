@@ -25,4 +25,11 @@ const isOrganization = (req, res, next) => {
   next();
 };
 
-module.exports = { authMiddleware, isOrganization };
+const isStudent = (req, res, next) => {
+  if (req.user.role !== 'student') {
+    return res.status(403).json({ error: 'Access denied. Students only.' });
+  }
+  next();
+};
+
+module.exports = { authMiddleware, isOrganization, isStudent };

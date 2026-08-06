@@ -162,9 +162,21 @@ const updateApplicationStatus = async (req, res) => {
   }
 };
 
+// Get full details of a specific application (for org)
+const getApplicationDetails = async (req, res) => {
+
+}
+
+// Delete an application (for student)
+const deleteApplication = async (req, res) => {
+
+}
+
 module.exports = {
   applyToInternship,
   getMyApplications,
   getOrgApplications,
-  updateApplicationStatus
+  updateApplicationStatus,
+  getApplicationDetails,
+  deleteApplication
 };
