@@ -88,8 +88,39 @@ const getStudentSkills = async (req, res) => {
 
 // Update skill proficiency
 const updateStudentSkill = async (req, res) => {
+  const studentSkillId = req.params.id;
+  const {proficiency} = req.body;
+  const userId = req.user.userId;
   try {
-    // YOUR CODE HERE
+    const studentProfile = await pool.query('SELECT id from student_profiles WHERE user_id = $1', [userId])
+    const student_id = studentProfile.rows[0].id;
+    
+    if(studentProfile.rows.length === 0){
+      return res.status(404).json({
+        error: 'Profile does not exist.'
+      })
+    }
+
+    if(!['beginner', 'intermediate', 'advanced'].includes(proficiency)){
+      return res.status(404).json({
+        error: 'Proficiency level can only be beginner, intermediate or advanced.'
+      })
+    }
+
+    const studentSkill = await pool.query('SELECT id, student_id FROM student_skills WHERE id = $1 AND student_id = $2', [studentSkillId, student_id])
+    if(studentSkill.rows.length === 0){
+      return res.status(403).json({
+        error: 'You can only update your own skills'
+      })
+    }
+
+    const updatedSkill = await pool.query('UPDATE student_skills SET proficiency = $1 WHERE id = $2 AND student_id = $3 RETURNING *', [proficiency, studentSkillId, student_id])
+  
+    res.status(200).json({
+      message: 'Skill updated successfully',
+      skill: updatedSkill.rows
+    })
+  
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
