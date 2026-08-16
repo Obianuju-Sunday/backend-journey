@@ -12,4 +12,4 @@ router.get('/my-skills', authMiddleware, isStudent, getStudentSkills);
 router.put('/:id', authMiddleware, isStudent, updateStudentSkill);
 router.delete('/:id', authMiddleware, isStudent, deleteStudentSkill);
 
-module.exports = router;
+module.exports = router; 
