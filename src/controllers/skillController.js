@@ -143,7 +143,7 @@ const deleteStudentSkill = async (req, res) => {
     }
 
     const studentSkill = await pool.query('SELECT id, student_id FROM student_skills WHERE id = $1 AND student_id =$2', [studentSkillId, student_id])
-    if(studentSkill.rows.length === 0){
+    if (studentSkill.rows.length === 0) {
       return res.status(403).json({
         error: 'You can only delete your own skills'
       })
