@@ -6,7 +6,7 @@ router.get('/register/student', (req, res) => {
   res.render('auth/registerStudent');
 });
 
-router.get('/register/organization', (req, res) => {
+router.get('/register/organisation', (req, res) => {
   res.render('auth/registerOrganisation');
 });
 

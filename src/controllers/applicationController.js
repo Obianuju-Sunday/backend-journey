@@ -66,7 +66,7 @@ const getMyApplications = async (req, res) => {
               o.company_name, o.industry
        FROM applications a
        JOIN internships i ON a.internship_id = i.id
-       JOIN organization_profiles o ON i.organization_id = o.id
+       JOIN organisation_profiles o ON i.organisation_id = o.id
        WHERE a.student_id = $1
        ORDER BY a.applied_at DESC`,
       [studentId]
@@ -80,19 +80,19 @@ const getMyApplications = async (req, res) => {
   }
 };
 
-// Get applications for organization's internships
+// Get applications for organisation's internships
 const getOrgApplications = async (req, res) => {
   const userId = req.user.userId;
 
   try {
     // Get org profile ID
     const orgProfile = await pool.query(
-      'SELECT id FROM organization_profiles WHERE user_id = $1',
+      'SELECT id FROM organisation_profiles WHERE user_id = $1',
       [userId]
     );
 
     if (orgProfile.rows.length === 0) {
-      return res.status(404).json({ error: 'Organization profile not found' });
+      return res.status(404).json({ error: 'organisation profile not found' });
     }
 
     const orgId = orgProfile.rows[0].id;
@@ -106,7 +106,7 @@ const getOrgApplications = async (req, res) => {
    JOIN internships i ON a.internship_id = i.id
    JOIN student_profiles s ON a.student_id = s.id
    JOIN users u ON s.user_id = u.id
-   WHERE i.organization_id = $1
+   WHERE i.organisation_id = $1
    ORDER BY a.applied_at DESC`,
       [orgId]
     );
@@ -127,12 +127,12 @@ const updateApplicationStatus = async (req, res) => {
   try {
     // Verify this application belongs to org's internship
     const orgProfile = await pool.query(
-      'SELECT id FROM organization_profiles WHERE user_id = $1',
+      'SELECT id FROM organisation_profiles WHERE user_id = $1',
       [userId]
     );
 
     if (orgProfile.rows.length === 0) {
-      return res.status(404).json({ error: 'Organization profile not found' });
+      return res.status(404).json({ error: 'organisation profile not found' });
     }
 
     const orgId = orgProfile.rows[0].id;
@@ -142,7 +142,7 @@ const updateApplicationStatus = async (req, res) => {
       `UPDATE applications a
        SET status = $1
        FROM internships i
-       WHERE a.id = $2 AND a.internship_id = i.id AND i.organization_id = $3
+       WHERE a.id = $2 AND a.internship_id = i.id AND i.organisation_id = $3
        RETURNING a.*`,
       [status, application_id, orgId]
     );

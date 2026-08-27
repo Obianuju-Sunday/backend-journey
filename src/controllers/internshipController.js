@@ -6,32 +6,32 @@ const createInternship = async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    // Get organization profile ID
+    // Get organisation profile ID
     const orgProfile = await pool.query(
-      'SELECT id, user_id FROM organization_profiles WHERE user_id = $1',
+      'SELECT id, user_id FROM organisation_profiles WHERE user_id = $1',
       [userId]
     );
 
     if (orgProfile.rows.length === 0) {
-      return res.status(404).json({ error: 'Organization profile not found' });
+      return res.status(404).json({ error: 'organisation profile not found' });
     }
 
-    // Check if organization is approved
+    // Check if organisation is approved
     const user = await pool.query('SELECT approved FROM users WHERE id = $1', [userId]);
 
     if (!user.rows[0].approved) {
       return res.status(403).json({ error: 'Your account must be approved before posting internships' });
     }
 
-    const organizationId = orgProfile.rows[0].id;
+    const organisationId = orgProfile.rows[0].id;
 
     // Create internship
     const newInternship = await pool.query(
       `INSERT INTO internships 
-       (organization_id, title, description, requirements, location, duration, stipend, other_info) 
+       (organisation_id, title, description, requirements, location, duration, stipend, other_info) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
        RETURNING *`,
-      [organizationId, title, description, requirements || null, location, duration || null, stipend || null, other_info || null]
+      [organisationId, title, description, requirements || null, location, duration || null, stipend || null, other_info || null]
     );
 
     res.status(201).json({
@@ -51,7 +51,7 @@ const getAllInternships = async (req, res) => {
     const internships = await pool.query(
       `SELECT i.*, o.company_name, o.industry, o.location as company_location
        FROM internships i
-       JOIN organization_profiles o ON i.organization_id = o.id
+       JOIN organisation_profiles o ON i.organisation_id = o.id
        WHERE i.is_active = true
        ORDER BY i.created_at DESC`
     );
@@ -68,13 +68,13 @@ const getOrgInternships = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    const orgProfile = await pool.query(`SELECT id FROM organization_profiles WHERE user_id = $1`, [userId])
+    const orgProfile = await pool.query(`SELECT id FROM organisation_profiles WHERE user_id = $1`, [userId])
     // Step 1: Find organisation profile for this user
     // Query: WHERE user_id = userId
 
     if (orgProfile.rows.length === 0) {
       return res.status(404).json({
-        error: "Organization profile not found"
+        error: "organisation profile not found"
       })
     }
 
@@ -83,7 +83,7 @@ const getOrgInternships = async (req, res) => {
     // If not, return 404
 
 
-    // const orgsInternships = await pool.query(`SELECT id FROM internships WHERE organization_id = $1`, [orgId])
+    // const orgsInternships = await pool.query(`SELECT id FROM internships WHERE organisation_id = $1`, [orgId])
 
     const internships = await pool.query(
       `SELECT 
@@ -92,7 +92,7 @@ const getOrgInternships = async (req, res) => {
        FROM internships i
        LEFT JOIN applications a
          ON a.internship_id = i.id
-       WHERE i.organization_id = $1
+       WHERE i.organisation_id = $1
        GROUP BY i.id
        ORDER BY i.created_at DESC`,
       [orgId]
@@ -107,7 +107,7 @@ const getOrgInternships = async (req, res) => {
         JOIN internships i ON a.internship_id = i.id
         JOIN student_profiles s ON a.student_id = s.id
         JOIN users u ON s.user_id = u.id
-        WHERE i.organization_id = $1`,
+        WHERE i.organisation_id = $1`,
       [orgId]
     )
 
@@ -155,26 +155,26 @@ const updateInternship = async (req, res) => {
 //   const userId = req.user.userId;
 
 //   try {
-//     // Get organization profile ID
+//     // Get organisation profile ID
 //     const orgProfile = await pool.query(
-//       'SELECT id FROM organization_profiles WHERE user_id = $1',
+//       'SELECT id FROM organisation_profiles WHERE user_id = $1',
 //       [userId]
 //     );
 
 //     if (orgProfile.rows.length === 0) {
-//       return res.status(404).json({ error: 'Organization profile not found' });
+//       return res.status(404).json({ error: 'organisation profile not found' });
 //     }
 
-//     const organizationId = orgProfile.rows[0].id;
+//     const organisationId = orgProfile.rows[0].id;
 
-//     // Check if the internship belongs to the organization
+//     // Check if the internship belongs to the organisation
 //     const internship = await pool.query(
-//       'SELECT * FROM internships WHERE id = $1 AND organization_id = $2',
-//       [internshipId, organizationId]
+//       'SELECT * FROM internships WHERE id = $1 AND organisation_id = $2',
+//       [internshipId, organisationId]
 //     );
 
 //     if (internship.rows.length === 0) {
-//       return res.status(404).json({ error: 'Internship not found or does not belong to your organization' });
+//       return res.status(404).json({ error: 'Internship not found or does not belong to your organisation' });
 //     }
 
 //     // Delete the internship

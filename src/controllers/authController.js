@@ -43,8 +43,8 @@ const registerStudent = async (req, res) => {
   }
 };
 
-// Register Organization
-const registerOrganization = async (req, res) => {
+// Register Organisation
+const registerOrganisation = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -65,18 +65,18 @@ const registerOrganization = async (req, res) => {
     // Insert user (approved = false for orgs)
     const newUser = await pool.query(
       'INSERT INTO users (email, password, role, approved) VALUES ($1, $2, $3, $4) RETURNING *',
-      [email, hashedPassword, 'organization', false]
+      [email, hashedPassword, 'organisation', false]
     );
 
     const userId = newUser.rows[0].id;
 
     // Insert org profile
     await pool.query(
-      'INSERT INTO organization_profiles (user_id, company_name, industry, niche, description, website, contact_email, location) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+      'INSERT INTO organisation_profiles (user_id, company_name, industry, niche, description, website, contact_email, location) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
       [userId, company_name, industry, niche || null, description || null, website || null, contact_email || null, location || null]
     );
 
-    res.status(201).json({ message: 'Organization registered. Awaiting admin approval.' });
+    res.status(201).json({ message: 'Organisation registered. Awaiting admin approval.' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -99,7 +99,7 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = userQuery.rows[0];
+    const user = userQuery.rows[0]; 
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
@@ -146,7 +146,7 @@ const getCurrentUser = async (req, res) => {
 
 module.exports = {
   registerStudent,
-  registerOrganization,
+  registerOrganisation,
   login,
   logout,
   getCurrentUser
