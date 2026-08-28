@@ -35,38 +35,6 @@ const getStudentProfile = async (req, res) => {
   }
 };
 
-// Get organization profile
-const getOrgProfile = async (req, res) => {
-  try {
-    const userId = req.user.userId;
-
-    const profile = await pool.query(
-      'SELECT * FROM organization_profiles WHERE id = $1',
-      [targetOrgId]
-    );
-
-    if (profile.rows.length === 0) {
-      return res.status(404).json({ error: 'Profile not found' });
-    }
-
-    res.status(200).json(profile.rows[0]);
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
-
-const updateStudentProfile = async (req, res) => {
-  res.json({ message: 'Coming soon' });
-
-}
-
-const updateOrgProfile = async (req, res) => {
-  res.json({ message: 'Coming soon' });
-
-}
-
 const getStudentProfilePublic = async (req, res) => {
 
   try {
@@ -100,12 +68,45 @@ const getStudentProfilePublic = async (req, res) => {
       skills: skills.rows
     });
 
-    res.status(200).json(studentProfile.rows[0])
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Server error' });
   }
 }
+
+// Get organisation profile
+const getOrgProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const profile = await pool.query(
+      'SELECT id, company_name, industry, niche, description, website, contact_email, location, created_at FROM organisation_profiles WHERE user_id = $1',
+      [userId]
+    );
+
+    if (profile.rows.length === 0) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+
+    res.status(200).json(profile.rows[0]);
+
+  } catch (err) {
+    console.error('Error getting org profile', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+const updateStudentProfile = async (req, res) => {
+  res.json({ message: 'Coming soon' });
+
+}
+
+const updateOrgProfile = async (req, res) => {
+  res.json({ message: 'Coming soon' });
+
+}
+
+
 
 const getOrgProfilePublic = async (req, res) => {
   try {

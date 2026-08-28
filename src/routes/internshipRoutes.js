@@ -18,6 +18,6 @@ router.get('/api/internships/all', getAllInternships);
 router.get('/org', authMiddleware, isOrganisation, getOrgInternships)
  
 // Delete internship (protected - orgs only)
-// router.post('/delete/:id', authMiddleware, isOrganization, deleteInternship);
+// router.post('/delete/:id', authMiddleware, isOrganisation, deleteInternship);
 
 module.exports = router;
