@@ -88,7 +88,7 @@ const getOrgProfile = async (req, res) => {
       return res.status(404).json({ error: 'Profile not found' });
     }
 
-    res.status(200).json(profile.rows[0]);
+    return res.status(200).json(profile.rows[0]);
 
   } catch (err) {
     console.error('Error getting org profile', err);
@@ -112,9 +112,21 @@ const getOrgProfilePublic = async (req, res) => {
   try {
     const orgId = req.params.id;
 
-    const orgProfile = await pool.query('SELECT ')
-  } catch (error) {
+    const orgProfile = await pool.query('SELECT id, company_name, industry, niche, description, website, location FROM organisation_profiles WHERE id = $1', [orgId])
 
+    if(orgProfile.rows.length === 0){
+      return res.status(404).json({
+        error: 'Profile not found'
+      })
+    }
+
+    return res.status(200).json(orgProfile.rows[0]);
+
+  } catch (error) {
+    console.error('Error getting org profile', error);
+    res.status(500).json({ 
+      error: 'Server error'
+    })
   }
 }
 
