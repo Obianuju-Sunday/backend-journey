@@ -29,13 +29,15 @@ const addStudentSkill = async (req, res) => {
   const userId = req.user.userId;
   try {
     const studentProfile = await pool.query('SELECT id FROM student_profiles WHERE user_id = $1', [userId]);
-    const student_id = studentProfile.rows[0].id;
 
     if (studentProfile.rows.length === 0) {
       return res.status(404).json({
         error: 'Profile does not exist.'
       })
     }
+
+    const student_id = studentProfile.rows[0].id;
+
 
     if (!['beginner', 'intermediate', 'advanced'].includes(proficiency)) {
       return res.status(400).json({
@@ -67,13 +69,15 @@ const getStudentSkills = async (req, res) => {
   const userId = req.user.userId;
   try {
     const studentProfile = await pool.query('SELECT id FROM student_profiles WHERE user_id = $1', [userId])
-    const student_id = studentProfile.rows[0].id;
 
     if (studentProfile.rows.length === 0) {
       return res.status(404).json({
         error: 'Profile does not exist.'
       })
     }
+
+    const student_id = studentProfile.rows[0].id;
+
 
     const studentSkills = await pool.query('SELECT ss.id, ss.student_id, ss.skill_id, s.skill_name, ss.proficiency FROM student_skills ss JOIN skills s ON ss.skill_id = s.id WHERE ss.student_id = $1', [student_id])
 
@@ -93,13 +97,15 @@ const updateStudentSkill = async (req, res) => {
   const userId = req.user.userId;
   try {
     const studentProfile = await pool.query('SELECT id from student_profiles WHERE user_id = $1', [userId])
-    const student_id = studentProfile.rows[0].id;
 
     if (studentProfile.rows.length === 0) {
       return res.status(404).json({
         error: 'Profile does not exist.'
       })
     }
+
+    const student_id = studentProfile.rows[0].id;
+
 
     if (!['beginner', 'intermediate', 'advanced'].includes(proficiency)) {
       return res.status(404).json({
@@ -134,13 +140,14 @@ const deleteStudentSkill = async (req, res) => {
   const userId = req.user.userId;
   try {
     const studentProfile = await pool.query('SELECT id FROM student_profiles WHERE user_id = $1', [userId])
-    const student_id = studentProfile.rows[0].id;
 
     if (studentProfile.rows.length === 0) {
       return res.status(404).json({
         error: 'Profile does not exist.'
       })
     }
+
+    const student_id = studentProfile.rows[0].id;
 
     const studentSkill = await pool.query('SELECT id, student_id FROM student_skills WHERE id = $1 AND student_id =$2', [studentSkillId, student_id])
     if (studentSkill.rows.length === 0) {
