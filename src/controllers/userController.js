@@ -96,18 +96,6 @@ const getOrgProfile = async (req, res) => {
   }
 };
 
-const updateStudentProfile = async (req, res) => {
-  res.json({ message: 'Coming soon' });
-
-}
-
-const updateOrgProfile = async (req, res) => {
-  res.json({ message: 'Coming soon' });
-
-}
-
-
-
 const getOrgProfilePublic = async (req, res) => {
   try {
     const orgId = req.params.id;
@@ -129,6 +117,20 @@ const getOrgProfilePublic = async (req, res) => {
     })
   }
 }
+
+const updateStudentProfile = async (req, res) => {
+  res.json({ message: 'Coming soon' });
+
+}
+
+const updateOrgProfile = async (req, res) => {
+  res.json({ message: 'Coming soon' });
+
+}
+
+
+
+
 
 module.exports = {
   getStudentProfile,
