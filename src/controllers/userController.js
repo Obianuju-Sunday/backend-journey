@@ -5,7 +5,6 @@ const getStudentProfile = async (req, res) => {
   try {
     const userId = req.user.userId
 
-
     const profile = await pool.query('SELECT id, full_name, program, year, university, bio, phone, location, portfolio_link, created_at FROM student_profiles WHERE user_id = $1', [userId]);
 
     if (profile.rows.length === 0) {
@@ -39,7 +38,7 @@ const getStudentProfile = async (req, res) => {
 // Get organization profile
 const getOrgProfile = async (req, res) => {
   try {
-    const targetOrgId = req.user.id;
+    const userId = req.user.userId;
 
     const profile = await pool.query(
       'SELECT * FROM organization_profiles WHERE id = $1',
@@ -74,7 +73,7 @@ const getStudentProfilePublic = async (req, res) => {
     const studentId = req.params.id;
 
     const studentProfile = await pool.query(
-      'SELECT id, full_name, program, university, portfolio_link FROM student_profiles WHERE id = $1',
+      'SELECT id, full_name, program, year, bio, university, portfolio_link FROM student_profiles WHERE id = $1',
       [studentId]
     );
 
@@ -83,6 +82,23 @@ const getStudentProfilePublic = async (req, res) => {
         error: 'Profile not found'
       })
     }
+
+    // Get student's skills
+    const skills = await pool.query(
+      `SELECT
+        s.skill_name,
+        ss.proficiency
+      FROM student_skills ss
+      JOIN skills s ON ss.skill_id = s.id
+      WHERE ss.student_id = $1
+      ORDER BY s.skill_name`,
+      [studentId]
+    );
+
+    return res.status(200).json({
+      ...studentProfile.rows[0],
+      skills: skills.rows
+    });
 
     res.status(200).json(studentProfile.rows[0])
   } catch (error) {
