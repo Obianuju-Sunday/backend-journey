@@ -121,33 +121,61 @@ const getOrgProfilePublic = async (req, res) => {
 const updateStudentProfile = async (req, res) => {
   try {
     const userId = req.user.userId;
-
-    const { full_name, program, year, university, bio, phone, location, portfolio_link } = req.body;
-
-    const result = await pool.query(
-      'UPDATE student_profiles SET full_name = $1, program = $2, year = $3, university = $4, bio = $5, phone = $6, location = $7, portfolio_link = $8 WHERE user_id = $9 RETURNING *',
-      [full_name, program, year, university, bio, phone, location, portfolio_link, userId]
-    )
-
-    if(result.rows.length === 0){
-      return res.status(404).json({ error: 'Profile not found' });
+    const updateData = req.body;
+        
+    const fields = [];
+    const values = [];
+    let placeholderIndex = 1;
+    
+    for (const [key, value] of Object.entries(updateData)) {
+      fields.push(`${key} = $${placeholderIndex}`);
+      values.push(value);
+      placeholderIndex++;
     }
-
-    return res.status(200).json({ 
-      message: 'Profile updated successfully', 
-      profile: result.rows[0] 
+    
+    values.push(userId);
+    const query = `UPDATE student_profiles SET ${fields.join(', ')} WHERE user_id = $${placeholderIndex} RETURNING *`;
+    
+    const result = await pool.query(query, values);
+    res.status(200).json({
+      message: 'Profile updated',
+      profile: result.rows[0]
     });
-
-  } catch (error) {
-    console.error('Error updating student profile', error);
+    
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
-
-}
+};
 
 const updateOrgProfile = async (req, res) => {
-  res.json({ message: 'Coming soon' });
+  try {
+    const userId = req.user.userId;
+    const updateData = req.body;
 
+    const fields = [];
+    const values = [];
+    let placeholderIndex = 1;
+
+    for (const [key, value] of Object.entries(updateData)) {
+      fields.push(`${key} = $${placeholderIndex}`);
+      values.push(value);
+      placeholderIndex++;
+    }
+
+    values.push(userId);
+    const query = `UPDATE organisation_profiles SET ${fields.join(', ')} WHERE user_id = $${placeholderIndex} RETURNING *`;
+
+    const result = await pool.query(query, values);
+    res.status(200).json({
+      message: 'Profile updated',
+      profile: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
 }
 
 
