@@ -20,8 +20,26 @@ const loginValidator = [
   body('password').notEmpty(),
 ];
 
+const updateStudentProfileValidator = [
+  body('full_name').optional().trim().notEmpty(),
+  body('bio').optional().trim(),
+  body('phone').optional().trim().isMobilePhone(),
+  body('location').optional().trim(),
+  body('portfolio_link').optional().trim().isURL(),
+];
+
+const updateOrgProfileValidator = [
+  body('company_name').optional().trim().notEmpty(),
+  body('industry').optional().trim(),
+  body('website').optional().trim().isURL(),
+  body('location').optional().trim(),
+  body('description').optional().trim(),
+];
+
 module.exports = {
   studentRegisterValidator,
   orgRegisterValidator,
-  loginValidator
+  loginValidator,
+  updateStudentProfileValidator,
+  updateOrgProfileValidator
 };

@@ -102,7 +102,7 @@ const getOrgProfilePublic = async (req, res) => {
 
     const orgProfile = await pool.query('SELECT id, company_name, industry, niche, description, website, location FROM organisation_profiles WHERE id = $1', [orgId])
 
-    if(orgProfile.rows.length === 0){
+    if (orgProfile.rows.length === 0) {
       return res.status(404).json({
         error: 'Profile not found'
       })
@@ -112,14 +112,36 @@ const getOrgProfilePublic = async (req, res) => {
 
   } catch (error) {
     console.error('Error getting org profile', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Server error'
     })
   }
 }
 
 const updateStudentProfile = async (req, res) => {
-  res.json({ message: 'Coming soon' });
+  try {
+    const userId = req.user.userId;
+
+    const { full_name, program, year, university, bio, phone, location, portfolio_link } = req.body;
+
+    const result = await pool.query(
+      'UPDATE student_profiles SET full_name = $1, program = $2, year = $3, university = $4, bio = $5, phone = $6, location = $7, portfolio_link = $8 WHERE user_id = $9 RETURNING *',
+      [full_name, program, year, university, bio, phone, location, portfolio_link, userId]
+    )
+
+    if(result.rows.length === 0){
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+
+    return res.status(200).json({ 
+      message: 'Profile updated successfully', 
+      profile: result.rows[0] 
+    });
+
+  } catch (error) {
+    console.error('Error updating student profile', error);
+    res.status(500).json({ error: 'Server error' });
+  }
 
 }
 
