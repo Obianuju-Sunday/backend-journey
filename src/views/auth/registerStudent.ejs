@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Internship Portal</title>
+  <title>Register as Student - Internship Portal</title>
   <style>
     * {
       margin: 0;
@@ -22,16 +22,16 @@
       min-height: calc(100vh - 200px);
       padding: 40px 20px;
     }
-    .login-box {
+    .register-box {
       background-color: white;
       padding: 40px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       border-top: 4px solid #2D5016;
     }
-    .login-box h1 {
+    .register-box h1 {
       color: #2D5016;
       margin-bottom: 30px;
       text-align: center;
@@ -46,14 +46,14 @@
       font-weight: 600;
       color: #1a1a1a;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 12px;
       border: 1px solid #e8e8e8;
       border-radius: 5px;
       font-size: 14px;
     }
-    input:focus {
+    input:focus, select:focus {
       outline: none;
       border-color: #2D5016;
       box-shadow: 0 0 5px rgba(45, 80, 22, 0.3);
@@ -87,19 +87,16 @@
       background-color: #f8d7da;
       color: #721c24;
     }
-    .register-link {
+    .login-link {
       text-align: center;
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid #e8e8e8;
     }
-    .register-link a {
+    .login-link a {
       color: #2D5016;
       text-decoration: none;
       font-weight: 600;
-    }
-    .register-link a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
@@ -107,10 +104,10 @@
   <%- include('../layouts/navbar') %>
   
   <div class="container">
-    <div class="login-box">
-      <h1>Login</h1>
+    <div class="register-box">
+      <h1>Register as Student</h1>
       
-      <form id="loginForm">
+      <form id="registerForm">
         <div class="form-group">
           <label for="email">Email Address</label>
           <input type="email" id="email" name="email" required placeholder="your@email.com">
@@ -118,17 +115,38 @@
         
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="Enter your password">
+          <input type="password" id="password" name="password" required placeholder="Min 6 characters">
         </div>
         
-        <button type="submit" class="btn">Login</button>
+        <div class="form-group">
+          <label for="full_name">Full Name</label>
+          <input type="text" id="full_name" name="full_name" required placeholder="Your full name">
+        </div>
+        
+        <div class="form-group">
+          <label for="program">Program/Course</label>
+          <input type="text" id="program" name="program" required placeholder="e.g. Computer Science">
+        </div>
+        
+        <div class="form-group">
+          <label for="year">Year of Study</label>
+          <select id="year" name="year" required>
+            <option value="">Select year</option>
+            <option value="1">Year 1</option>
+            <option value="2">Year 2</option>
+            <option value="3">Year 3</option>
+            <option value="4">Year 4</option>
+            <option value="5">Year 5</option>
+            <option value="6">Year 6</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn">Register</button>
         <div id="message"></div>
       </form>
       
-      <div class="register-link">
-        <p>Don't have an account?</p>
-        <a href="/auth/register/student">Register as Student</a> | 
-        <a href="/auth/register/org">Register as Organization</a>
+      <div class="login-link">
+        <p>Already have an account? <a href="/auth/login">Login here</a></p>
       </div>
     </div>
   </div>
@@ -136,39 +154,37 @@
   <%- include('../layouts/footer') %>
   
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+      const formData = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        full_name: document.getElementById('full_name').value,
+        program: document.getElementById('program').value,
+        year: parseInt(document.getElementById('year').value)
+      };
       
       try {
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch('/api/auth/register/student', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify(formData)
         });
         
         const data = await response.json();
         
         if (response.ok) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          
           const messageDiv = document.getElementById('message');
           messageDiv.className = 'message success';
-          messageDiv.textContent = 'Login successful! Redirecting...';
+          messageDiv.textContent = 'Registration successful! Redirecting to login...';
           
           setTimeout(() => {
-            if (data.user.role === 'student') {
-              window.location.href = '/student/browse';
-            } else {
-              window.location.href = '/org/dashboard';
-            }
+            window.location.href = '/auth/login';
           }, 1500);
         } else {
           document.getElementById('message').className = 'message error';
-          document.getElementById('message').textContent = data.error || 'Login failed';
+          document.getElementById('message').textContent = data.error || 'Registration failed';
         }
       } catch (err) {
         document.getElementById('message').className = 'message error';

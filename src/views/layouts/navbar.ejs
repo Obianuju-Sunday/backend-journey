@@ -1,0 +1,28 @@
+<nav style="background-color: #2D5016; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+  <div style="color: #FFFDD0; font-size: 24px; font-weight: bold;">Internship Portal</div>
+  
+  <div style="display: flex; gap: 20px; align-items: center;">
+    <% if (user) { %>
+      <% if (user.role === 'student') { %>
+        <a href="/student/browse" style="color: #FFFDD0; text-decoration: none; font-weight: 600;">Browse Internships</a>
+        <a href="/student/my-applications" style="color: #FFFDD0; text-decoration: none; font-weight: 600;">My Applications</a>
+        <a href="/student/skills" style="color: #FFFDD0; text-decoration: none; font-weight: 600;">My Skills</a>
+      <% } else if (user.role === 'organisation') { %>
+        <a href="/org/dashboard" style="color: #FFFDD0; text-decoration: none; font-weight: 600;">Dashboard</a>
+        <a href="/org/applications" style="color: #FFFDD0; text-decoration: none; font-weight: 600;">Applications</a>
+      <% } %>
+      <button onclick="logout()" style="background-color: #c41e3a; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600;">Logout</button>
+    <% } else { %>
+      <a href="/auth/login" style="color: #FFFDD0; text-decoration: none; font-weight: 600;">Login</a>
+      <a href="/auth/register/student" style="color: #FFFDD0; text-decoration: none; font-weight: 600;">Register Student</a>
+      <a href="/auth/register/org" style="color: #FFFDD0; text-decoration: none; font-weight: 600;">Register Org</a>
+    <% } %>
+  </div>
+</nav>
+
+<script>
+function logout() {
+  localStorage.clear();
+  window.location.href = '/';
+}
+</script>

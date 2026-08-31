@@ -9,10 +9,10 @@ router.get('/org', authMiddleware, isOrganisation, (req, res) => {
 });
  
 // Create internship (protected - orgs only)
-router.post('/api/internships/create', authMiddleware, isOrganisation, createInternship);
+router.post('/create', authMiddleware, isOrganisation, createInternship);
  
 // Get all internships for students (public)
-router.get('/api/internships/all', getAllInternships);
+router.get('/all', getAllInternships);
 
 // View internship postings (protected - orgs only) 
 router.get('/org', authMiddleware, isOrganisation, getOrgInternships)

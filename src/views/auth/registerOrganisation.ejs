@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Internship Portal</title>
+  <title>Register as Organization - Internship Portal</title>
   <style>
     * {
       margin: 0;
@@ -22,16 +22,16 @@
       min-height: calc(100vh - 200px);
       padding: 40px 20px;
     }
-    .login-box {
+    .register-box {
       background-color: white;
       padding: 40px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       border-top: 4px solid #2D5016;
     }
-    .login-box h1 {
+    .register-box h1 {
       color: #2D5016;
       margin-bottom: 30px;
       text-align: center;
@@ -87,19 +87,16 @@
       background-color: #f8d7da;
       color: #721c24;
     }
-    .register-link {
+    .login-link {
       text-align: center;
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid #e8e8e8;
     }
-    .register-link a {
+    .login-link a {
       color: #2D5016;
       text-decoration: none;
       font-weight: 600;
-    }
-    .register-link a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
@@ -107,28 +104,36 @@
   <%- include('../layouts/navbar') %>
   
   <div class="container">
-    <div class="login-box">
-      <h1>Login</h1>
+    <div class="register-box">
+      <h1>Register as Organization</h1>
       
-      <form id="loginForm">
+      <form id="registerForm">
         <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" required placeholder="your@email.com">
+          <label for="email">Organization Email</label>
+          <input type="email" id="email" name="email" required placeholder="contact@company.com">
         </div>
         
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="Enter your password">
+          <input type="password" id="password" name="password" required placeholder="Min 6 characters">
         </div>
         
-        <button type="submit" class="btn">Login</button>
+        <div class="form-group">
+          <label for="company_name">Company Name</label>
+          <input type="text" id="company_name" name="company_name" required placeholder="Your company name">
+        </div>
+        
+        <div class="form-group">
+          <label for="industry">Industry</label>
+          <input type="text" id="industry" name="industry" required placeholder="e.g. Software Development">
+        </div>
+        
+        <button type="submit" class="btn">Register Organization</button>
         <div id="message"></div>
       </form>
       
-      <div class="register-link">
-        <p>Don't have an account?</p>
-        <a href="/auth/register/student">Register as Student</a> | 
-        <a href="/auth/register/org">Register as Organization</a>
+      <div class="login-link">
+        <p>Already have an account? <a href="/auth/login">Login here</a></p>
       </div>
     </div>
   </div>
@@ -136,39 +141,36 @@
   <%- include('../layouts/footer') %>
   
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+      const formData = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        company_name: document.getElementById('company_name').value,
+        industry: document.getElementById('industry').value
+      };
       
       try {
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch('/api/auth/register/organization', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify(formData)
         });
         
         const data = await response.json();
         
         if (response.ok) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          
           const messageDiv = document.getElementById('message');
           messageDiv.className = 'message success';
-          messageDiv.textContent = 'Login successful! Redirecting...';
+          messageDiv.textContent = 'Registration successful! Redirecting to login...';
           
           setTimeout(() => {
-            if (data.user.role === 'student') {
-              window.location.href = '/student/browse';
-            } else {
-              window.location.href = '/org/dashboard';
-            }
+            window.location.href = '/auth/login';
           }, 1500);
         } else {
           document.getElementById('message').className = 'message error';
-          document.getElementById('message').textContent = data.error || 'Login failed';
+          document.getElementById('message').textContent = data.error || 'Registration failed';
         }
       } catch (err) {
         document.getElementById('message').className = 'message error';

@@ -7,7 +7,7 @@ const { authMiddleware, isStudent } = require('../middleware/auth');
 router.get('/all', getAllSkills);
 
 // Student only
-router.post('/add', authMiddleware, isStudent, addStudentSkill);
+router.post('/add', authMiddleware, isStudent, addStudentSkill); 
 router.get('/my-skills', authMiddleware, isStudent, getStudentSkills);
 router.patch('/:id', authMiddleware, isStudent, updateStudentSkill);
 router.delete('/:id', authMiddleware, isStudent, deleteStudentSkill);
