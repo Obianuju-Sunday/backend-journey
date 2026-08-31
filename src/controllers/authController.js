@@ -36,7 +36,14 @@ const registerStudent = async (req, res) => {
       [userId, full_name, program, year, university || null, bio || null, phone || null, location || null, portfolio_link || null]
     );
 
-    res.status(201).json({ message: 'Student registered successfully' });
+    res.status(201).json({
+      message: 'Student registered successfully',
+      user: {
+        id: userId,
+        email,
+        role: 'student',
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -56,9 +63,9 @@ const registerOrganisation = async (req, res) => {
     // Check if user exists
     const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (userExists.rows.length > 0) {
-      return res.status(409).json({ error: 'Email already registered' });
-    } 
- 
+      return res.status(409).json({ error: 'Invalid Credentials.' });
+    }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -76,7 +83,13 @@ const registerOrganisation = async (req, res) => {
       [userId, company_name, industry, niche || null, description || null, website || null, contact_email || null, location || null]
     );
 
-    res.status(201).json({ message: 'Organisation registered. Awaiting admin approval.' });
+    res.status(201).json({ message: 'Organisation registered. Awaiting admin approval.',
+      user: {
+        id: userId,
+        email,
+        role: 'organisation',
+      }
+     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -99,7 +112,7 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = userQuery.rows[0]; 
+    const user = userQuery.rows[0];
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
@@ -109,10 +122,10 @@ const login = async (req, res) => {
 
     // Generate token
     const token = jwt.sign(
-      { 
-        userId: user.id, 
-        email: user.email, 
-        role: user.role 
+      {
+        userId: user.id,
+        email: user.email,
+        role: user.role
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
