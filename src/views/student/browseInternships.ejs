@@ -1,271 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Browse Internships - Internship Portal</title>
+  <title>Browse Internships</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #FFFDD0;
-      color: #1a1a1a;
+      font-family: Arial;
+      background-color: #efefef;
+      color: #000000;
     }
+
+    .navbar {
+      background-color: #2a3f0f;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar a {
+      color: #efefef;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    .navbar button {
+      background-color: #c41e3a;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 40px 20px;
     }
+
     h1 {
-      color: #2D5016;
+      color: #2a3f0f;
       margin-bottom: 30px;
-      font-size: 32px;
     }
+
     .internships-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
     }
+
     .internship-card {
-      background-color: white;
-      padding: 25px;
-      border-radius: 8px;
-      border-left: 4px solid #2D5016;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
+      background: white;
+      padding: 20px;
+      border-left: 4px solid #2a3f0f;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    .internship-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
+
     .internship-card h3 {
-      color: #2D5016;
+      color: #2a3f0f;
       margin-bottom: 10px;
-      font-size: 20px;
     }
-    .company {
+
+    .internship-card p {
+      margin: 5px 0;
       color: #666;
-      font-size: 14px;
-      margin-bottom: 15px;
     }
-    .internship-info {
-      font-size: 14px;
-      color: #666;
-      margin: 10px 0;
-      line-height: 1.6;
-    }
+
     .apply-btn {
-      width: 100%;
-      padding: 12px;
-      background-color: #2D5016;
-      color: #FFFDD0;
+      background-color: #2a3f0f;
+      color: #efefef;
+      padding: 10px 20px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-weight: 600;
       margin-top: 15px;
-      font-size: 14px;
+      width: 100%;
+      font-weight: bold;
     }
+
     .apply-btn:hover {
-      background-color: #1e3410;
+      background-color: #1a2f0a;
     }
-    .empty-state {
+
+    .footer {
+      background-color: #2a3f0f;
+      color: #efefef;
       text-align: center;
-      padding: 60px 20px;
-      color: #666;
-    }
-    .empty-state h2 {
-      margin-bottom: 10px;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-    }
-    .modal.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 40px;
-      border-radius: 8px;
-      max-width: 500px;
-      width: 90%;
-      border-top: 4px solid #2D5016;
-    }
-    .modal-content h2 {
-      color: #2D5016;
-      margin-bottom: 20px;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #e8e8e8;
-      border-radius: 5px;
-      font-family: inherit;
-      resize: vertical;
-      min-height: 150px;
-    }
-    textarea:focus {
-      outline: none;
-      border-color: #2D5016;
-    }
-    .btn-group {
-      display: flex;
-      gap: 10px;
-    }
-    .btn {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 5px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-submit {
-      background-color: #2D5016;
-      color: #FFFDD0;
-    }
-    .btn-submit:hover {
-      background-color: #1e3410;
-    }
-    .btn-cancel {
-      background-color: #e8e8e8;
-      color: #1a1a1a;
-    }
-    .btn-cancel:hover {
-      background-color: #d0d0d0;
-    }
-    .close-modal {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 28px;
-      cursor: pointer;
-      color: #666;
+      padding: 20px;
+      margin-top: 50px;
     }
   </style>
 </head>
+
 <body>
+  <!-- NAVBAR -->
   <%- include('../layouts/navbar') %>
-  
+
+  <!-- MAIN CONTENT -->
   <div class="container">
     <h1>Browse Internship Opportunities</h1>
-    
+
+    <!-- INTERNSHIPS WILL LOAD HERE -->
     <div class="internships-grid" id="internshipsList">
       <p>Loading internships...</p>
     </div>
   </div>
-  
-  <!-- Apply Modal -->
-  <div class="modal" id="applyModal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeModal()">&times;</span>
-      <h2>Apply to Internship</h2>
-      <h3 id="modalInternshipTitle" style="color: #2D5016; margin-bottom: 20px; font-size: 18px;"></h3>
-      
-      <form id="applicationForm">
-        <input type="hidden" id="internshipId" name="internship_id">
-        
-        <div class="form-group">
-          <label for="coverLetter">Cover Letter (Optional)</label>
-          <textarea id="coverLetter" name="cover_letter" placeholder="Tell us why you're interested in this internship..."></textarea>
-        </div>
-        
-        <div class="btn-group">
-          <button type="submit" class="btn btn-submit">Submit Application</button>
-          <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
-        </div>
-        <div id="appMessage"></div>
-      </form>
-    </div>
-  </div>
-  
+
+  <!-- FOOTER -->
   <%- include('../layouts/footer') %>
-  
+
   <script>
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
+    // ========== STEP 1: CHECK IF USER IS LOGGED IN ==========
+    // const token = localStorage.getItem('token');
+    // const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token || user.role !== 'student') {
       window.location.href = '/auth/login';
     }
-    
+
+    // ========== STEP 2: FETCH INTERNSHIPS FROM API ==========
     async function loadInternships() {
       try {
+        // Call backend API to get internships
         const response = await fetch('/api/internship/all');
         const data = await response.json();
-        
+
         const container = document.getElementById('internshipsList');
-        
+
         if (!data.internships || data.internships.length === 0) {
-          container.innerHTML = '<div class="empty-state"><h2>No internships available yet</h2><p>Check back soon!</p></div>';
+          container.innerHTML = '<p>No internships available</p>';
           return;
         }
-        
+
+        // Build HTML for each internship
         container.innerHTML = data.internships.map(internship => `
           <div class="internship-card">
             <h3>${internship.title}</h3>
-            <p class="company">🏢 ${internship.company_name}</p>
-            <div class="internship-info">
-              <strong>Location:</strong> ${internship.location}
-            </div>
-            <div class="internship-info">
-              <strong>Duration:</strong> ${internship.duration}
-            </div>
-            <div class="internship-info">
-              <strong>Stipend:</strong> ${internship.stipend}
-            </div>
-            <div class="internship-info">
-              ${internship.description.substring(0, 150)}...
-            </div>
-            <button class="apply-btn" onclick="openApplyModal(${internship.id}, '${internship.title.replace(/'/g, "\\'")}')">Apply Now</button>
+            <p><strong>Company:</strong> ${internship.company_name}</p>
+            <p><strong>Location:</strong> ${internship.location}</p>
+            <p><strong>Duration:</strong> ${internship.duration}</p>
+            <p><strong>Stipend:</strong> ${internship.stipend}</p>
+            <p>${internship.description.substring(0, 100)}...</p>
+            <button class="apply-btn" onclick="applyNow(${internship.id}, '${internship.title}')">Apply Now</button>
           </div>
         `).join('');
-        
+
       } catch (err) {
-        console.error(err);
+        console.error('Error:', err);
         document.getElementById('internshipsList').innerHTML = '<p style="color: red;">Error loading internships</p>';
       }
     }
-    
-    function openApplyModal(internshipId, title) {
-      document.getElementById('applyModal').classList.add('active');
-      document.getElementById('modalInternshipTitle').textContent = title;
-      document.getElementById('internshipId').value = internshipId;
+
+    // ========== STEP 3: APPLY TO INTERNSHIP ==========
+    function applyNow(internshipId, title) {
+      const coverLetter = prompt(`Apply to: ${title}\n\nEnter cover letter (or leave blank):`);
+
+      if (coverLetter !== null) {
+        submitApplication(internshipId, coverLetter);
+      }
     }
-    
-    function closeModal() {
-      document.getElementById('applyModal').classList.remove('active');
-      document.getElementById('applicationForm').reset();
-      document.getElementById('appMessage').innerHTML = '';
-    }
-    
-    document.getElementById('applicationForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData);
-      data.internship_id = parseInt(data.internship_id);
-      
+
+    async function submitApplication(internshipId, coverLetter) {
       try {
         const response = await fetch('/api/application/apply', {
           method: 'POST',
@@ -273,35 +179,33 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify({
+            internship_id: internshipId,
+            cover_letter: coverLetter
+          })
         });
-        
-        const result = await response.json();
-        const messageDiv = document.getElementById('appMessage');
-        
+
+        const data = await response.json();
+
         if (response.ok) {
-          messageDiv.style.color = '#155724';
-          messageDiv.style.backgroundColor = '#d4edda';
-          messageDiv.style.padding = '10px';
-          messageDiv.style.borderRadius = '5px';
-          messageDiv.style.marginTop = '15px';
-          messageDiv.textContent = result.message;
-          
-          setTimeout(() => closeModal(), 2000);
+          alert('Application submitted successfully!');
         } else {
-          messageDiv.style.color = '#721c24';
-          messageDiv.style.backgroundColor = '#f8d7da';
-          messageDiv.style.padding = '10px';
-          messageDiv.style.borderRadius = '5px';
-          messageDiv.style.marginTop = '15px';
-          messageDiv.textContent = result.error;
+          alert(`Error: ${data.error}`);
         }
       } catch (err) {
-        document.getElementById('appMessage').textContent = 'Error submitting application';
+        alert('Error submitting application');
       }
-    });
-    
+    }
+
+    // ========== STEP 4: LOGOUT ==========
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/auth/login';
+    }
+
+    // ========== STEP 5: LOAD PAGE ==========
     loadInternships();
   </script>
 </body>
+
 </html>

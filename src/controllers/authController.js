@@ -120,6 +120,23 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Get profile data based on role 
+    let profileData = {};
+    
+    if (user.role === 'student') {
+      const studentProfile = await pool.query(
+        'SELECT full_name FROM student_profiles WHERE user_id = $1',
+        [user.id]
+      );
+      profileData.full_name = studentProfile.rows[0]?.full_name || 'Student';
+    } else if (user.role === 'organisation') {
+      const orgProfile = await pool.query(
+        'SELECT company_name FROM organisation_profiles WHERE user_id = $1',
+        [user.id]
+      );
+      profileData.company_name = orgProfile.rows[0]?.company_name || 'Organization';
+    }
+
     // Generate token
     const token = jwt.sign(
       {
@@ -138,10 +155,12 @@ const login = async (req, res) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        approved: user.approved
+        approved: user.approved,
+        full_name: profileData.full_name,
+        company_name: profileData.company_name
       }
     });
-  } catch (err) {
+  } catch (err) { 
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }

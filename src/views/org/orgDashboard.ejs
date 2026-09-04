@@ -12,7 +12,7 @@
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #FFFDD0;
+      background-color: #efefef;
       color: #1a1a1a;
     }
     .container {
@@ -26,15 +26,15 @@
       align-items: center;
       margin-bottom: 40px;
       padding-bottom: 20px;
-      border-bottom: 2px solid #2D5016;
+      border-bottom: 2px solid #2a3f0f;
     }
     .header h1 {
-      color: #2D5016;
+      color: #2a3f0f;
       font-size: 32px;
     }
     .btn-primary {
-      background-color: #2D5016;
-      color: #FFFDD0;
+      background-color: #2a3f0f;
+      color: #efefef;
       padding: 12px 25px;
       border: none;
       border-radius: 5px;
@@ -54,11 +54,11 @@
       background-color: white;
       padding: 25px;
       border-radius: 8px;
-      border-left: 4px solid #2D5016;
+      border-left: 4px solid #2a3f0f;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .internship-card h3 {
-      color: #2D5016;
+      color: #2a3f0f;
       margin-bottom: 10px;
       font-size: 20px;
     }
@@ -69,8 +69,8 @@
       line-height: 1.6;
     }
     .app-count {
-      background-color: #2D5016;
-      color: #FFFDD0;
+      background-color: #2a3f0f;
+      color: #efefef;
       display: inline-block;
       padding: 5px 12px;
       border-radius: 20px;
@@ -92,8 +92,8 @@
       font-size: 13px;
     }
     .btn-view {
-      background-color: #2D5016;
-      color: #FFFDD0;
+      background-color: #2a3f0f;
+      color: #efefef;
     }
     .btn-view:hover {
       background-color: #1e3410;
@@ -120,7 +120,7 @@
       margin-top: 30px;
     }
     .empty-state h2 {
-      color: #2D5016;
+      color: #2a3f0f;
       margin-bottom: 15px;
     }
     .empty-state p {
@@ -148,7 +148,7 @@
       border-radius: 8px;
       max-width: 600px;
       width: 90%;
-      border-top: 4px solid #2D5016;
+      border-top: 4px solid #2a3f0f;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -177,13 +177,13 @@
     }
     input:focus, textarea:focus {
       outline: none;
-      border-color: #2D5016;
+      border-color: #2a3f0f;
     }
     .btn-submit {
       width: 100%;
       padding: 12px;
-      background-color: #2D5016;
-      color: #FFFDD0;
+      background-color: #2a3f0f;
+      color: #efefef;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -210,7 +210,7 @@
   <div class="modal" id="postModal">
     <div class="modal-content">
       <span class="close-modal" onclick="closePostModal()">&times;</span>
-      <h2 style="color: #2D5016; margin-bottom: 20px;">Post New Internship</h2>
+      <h2 style="color: #2a3f0f; margin-bottom: 20px;">Post New Internship</h2>
       
       <form id="postForm">
         <div class="form-group">
@@ -252,8 +252,8 @@
   <%- include('../layouts/footer') %>
   
   <script>
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    // const token = localStorage.getItem('token');
+    // const user = JSON.parse(localStorage.getItem('user') || '{}');
     
     if (!token || user.role !== 'organisation') {
       window.location.href = '/auth/login';

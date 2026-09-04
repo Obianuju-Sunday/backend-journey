@@ -125,17 +125,13 @@ const getOrgInternships = async (req, res) => {
     });
 
 
-    // Step 5: Render the EJS template
-    // Pass: internships + orgName
-
-    res.render("internships", {
+    res.json({
       internships: internships.rows,
-      applications: applications.rows,
-      orgName: internships.orgName
+      applications: applications.rows
     });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json('error', { message: 'Failed to fetch internships' });
+    res.status(500).json({ error: 'Failed to fetch internships' });
   }
 };
 

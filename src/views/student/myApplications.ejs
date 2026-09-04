@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Applications - Internship Portal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #efefef;
+      color: #1a1a1a;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    h1 {
+      color: #2a3f0f;
+      margin-bottom: 30px;
+      font-size: 32px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    thead {
+      background-color: #2a3f0f;
+      color: #efefef;
+    }
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+    .status {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .status-accepted {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status-rejected {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .empty-state h2 {
+      color: #2a3f0f;
+      margin-bottom: 10px;
+    }
+    .empty-state p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background-color: #2a3f0f;
+      color: #efefef;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn:hover {
+      background-color: #1e3410;
+    }
+  </style>
+</head>
+<body>
+  <%- include('../layouts/navbar') %>
+  
+  <div class="container">
+    <h1>My Applications</h1>
+    
+    <div id="applicationsContainer">
+      <p>Loading applications...</p>
+    </div>
+  </div>
+  
+  <%- include('../layouts/footer') %>
+  
+  <script>
+    // const token = localStorage.getItem('token');
+    // const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (!token || user.role !== 'student') {
+      window.location.href = '/auth/login';
+    }
+    
+    async function loadApplications() {
+      try {
+        const response = await fetch('/api/application/my-applications', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        const container = document.getElementById('applicationsContainer');
+        
+        if (!data.applications || data.applications.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <h2>No applications yet</h2>
+              <p>Start exploring internship opportunities</p>
+              <a href="/student/browse" class="btn">Browse Internships</a>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Internship Title</th>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Applied On</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.applications.map(app => `
+                <tr>
+                  <td><strong>${app.title}</strong></td>
+                  <td>${app.company_name}</td>
+                  <td>
+                    <span class="status status-${app.status}">
+                      ${app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                    </span>
+                  </td>
+                  <td>${new Date(app.applied_at).toLocaleDateString()}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        
+      } catch (err) {
+        console.error(err);
+        document.getElementById('applicationsContainer').innerHTML = '<p style="color: red;">Error loading applications</p>';
+      }
+    }
+    
+    loadApplications();
+  </script>
+</body>
+</html>

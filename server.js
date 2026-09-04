@@ -1,52 +1,38 @@
-
-// server.js - Main entry point for the Student Internship System backend
-// This file sets up the Express server, connects to the database, and defines routes.
-require('dotenv').config();
+// server.js
 const express = require('express');
-const pool = require('./src/config/db');
-const app = express();
 const path = require('path');
+const app = express();
 
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// ========== SETUP EJS ==========
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 app.use(express.static('public'));
 
-// EJS routes:
-app.get('/', (req, res) => res.render('home', { user: req.user }));
-app.get('/auth/login', (req, res) => res.render('auth/login', { user: null }));
-app.get('/auth/register/student', (req, res) => res.render('auth/registerStudent', { user: null }));
-app.get('/auth/register/org', (req, res) => res.render('auth/registerOrganisation', { user: null }));
-app.get('/student/browse', (req, res) => res.render('student/browseInternships', { user: req.user }));
-app.get('/org/dashboard', (req, res) => res.render('org/orgDashboard', { user: req.user }));
-app.get('/student/my-applications', (req, res) => res.render('student/myApplications', { user: req.user }));
+// ========== MIDDLEWARE ==========
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// API routes
+// ========== IMPORT ROUTES ==========
+const pagesRouter = require('./src/routes/pages');
 const authRoutes = require('./src/routes/authRoutes');
-app.use('/api/auth', authRoutes);
-
+const internshipRoutes = require('./src/routes/internshipRoutes');
+const applicationRoutes = require('./src/routes/applicationRoutes');
+const skillRoutes = require('./src/routes/skillRoutes');
 const userRoutes = require('./src/routes/userRoutes');
+
+// ========== USE ROUTES ==========
+// Pages first (renders EJS)
+app.use('/', pagesRouter);
+
+// API routes second (handles data)
+app.use('/api/auth', authRoutes);
+app.use('/api/internship', internshipRoutes);
+app.use('/api/application', applicationRoutes);
+app.use('/api/skills', skillRoutes);
 app.use('/api/users', userRoutes);
 
-const internshipRoutes = require('./src/routes/internshipRoutes');
-app.use('/api/internship', internshipRoutes);
-
-const applicationRoutes = require('./src/routes/applicationRoutes');
-app.use('/api/application', applicationRoutes);
-
-const skillRoutes = require('./src/routes/skillRoutes');
-app.use('/api/skills', skillRoutes); 
-
-// Basic route to check if server is running
-app.get('/', (req, res) => {
-  res.render('home'); 
-}); 
-
-// Start the server
-const PORT = process.env.PORT || 3000;
+// ========== START SERVER ==========
+const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

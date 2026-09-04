@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Skills - Internship Portal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #efefef;
+      color: #1a1a1a;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #2a3f0f;
+    }
+    .header h1 {
+      color: #2a3f0f;
+      font-size: 32px;
+    }
+    .btn-add {
+      background-color: #2a3f0f;
+      color: #efefef;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-add:hover {
+      background-color: #1e3410;
+    }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .skill-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #2a3f0f;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .skill-info {
+      flex: 1;
+    }
+    .skill-name {
+      color: #2a3f0f;
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .proficiency {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background-color: #2a3f0f;
+      color: #efefef;
+    }
+    .skill-actions {
+      display: flex;
+      gap: 10px;
+      margin-left: 15px;
+    }
+    .btn-small {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .btn-edit {
+      background-color: #4a90a4;
+      color: white;
+    }
+    .btn-edit:hover {
+      background-color: #3a7a94;
+    }
+    .btn-delete {
+      background-color: #c41e3a;
+      color: white;
+    }
+    .btn-delete:hover {
+      background-color: #a01a2f;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background-color: white;
+      border-radius: 8px;
+    }
+    .empty-state h2 {
+      color: #2a3f0f;
+      margin-bottom: 10px;
+    }
+    .empty-state p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 40px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      border-top: 4px solid #2a3f0f;
+    }
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #666;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e8e8e8;
+      border-radius: 5px;
+      font-family: inherit;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2a3f0f;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-submit {
+      background-color: #2a3f0f;
+      color: #efefef;
+    }
+    .btn-cancel {
+      background-color: #e8e8e8;
+      color: #1a1a1a;
+    }
+    .message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <%- include('../layouts/navbar') %>
+  
+  
+  <div class="container">
+    <div class="header">
+      <h1>My Skills</h1>
+      <button class="btn-add" onclick="openAddModal()">+ Add Skill</button>
+    </div>
+    
+    <div id="skillsContainer">
+      <p>Loading skills...</p>
+    </div>
+  </div>
+  
+  <!-- Add Skill Modal -->
+  <div class="modal" id="addModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeAddModal()">&times;</span>
+      <h2 style="color: #2a3f0f; margin-bottom: 20px;">Add New Skill</h2>
+      
+      <form id="addForm">
+        <div class="form-group">
+          <label for="skillSelect">Select Skill</label>
+          <select id="skillSelect" name="skill_id" required>
+            <option value="">-- Choose a skill --</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="proficiency">Proficiency Level</label>
+          <select id="proficiency" name="proficiency" required>
+            <option value="">-- Select level --</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+        
+        <div class="btn-group">
+          <button type="submit" class="btn btn-submit">Add Skill</button>
+          <button type="button" class="btn btn-cancel" onclick="closeAddModal()">Cancel</button>
+        </div>
+        <div id="addMessage"></div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Edit Skill Modal -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeEditModal()">&times;</span>
+      <h2 style="color: #2a3f0f; margin-bottom: 20px;">Edit Skill</h2>
+      
+      <form id="editForm">
+        <input type="hidden" id="editSkillId" name="skill_id">
+        
+        <div class="form-group">
+          <label for="editProficiency">Proficiency Level</label>
+          <select id="editProficiency" name="proficiency" required>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+        
+        <div class="btn-group">
+          <button type="submit" class="btn btn-submit">Update Skill</button>
+          <button type="button" class="btn btn-cancel" onclick="closeEditModal()">Cancel</button>
+        </div>
+        <div id="editMessage"></div>
+      </form>
+    </div>
+  </div>
+  
+  <%- include('../layouts/footer') %>
+  
+  <script>
+    // const token = localStorage.getItem('token');
+    // const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (!token || user.role !== 'student') {
+      window.location.href = '/auth/login';
+    }
+    
+    let allSkills = [];
+    
+    async function loadAllSkills() {
+      try {
+        const response = await fetch('/api/skills/all');
+        const data = await response.json();
+        allSkills = data.skills || [];
+        
+        const select = document.getElementById('skillSelect');
+        select.innerHTML = '<option value="">-- Choose a skill --</option>';
+        allSkills.forEach(skill => {
+          select.innerHTML += `<option value="${skill.id}">${skill.skill_name}</option>`;
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    
+    async function loadMySkills() {
+      try {
+        const response = await fetch('/api/skills/my-skills', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        const container = document.getElementById('skillsContainer');
+        
+        if (!data.skills || data.skills.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <h2>No skills added yet</h2>
+              <p>Start by adding your first skill to showcase your expertise</p>
+              <button class="btn-add" onclick="openAddModal()">+ Add Skill</button>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = `<div class="skills-grid">
+          ${data.skills.map(skill => `
+            <div class="skill-card">
+              <div class="skill-info">
+                <div class="skill-name">${skill.skill_name}</div>
+                <span class="proficiency">${skill.proficiency.charAt(0).toUpperCase() + skill.proficiency.slice(1)}</span>
+              </div>
+              <div class="skill-actions">
+                <button class="btn-small btn-edit" onclick="openEditModal(${skill.id}, '${skill.proficiency}')">Edit</button>
+                <button class="btn-small btn-delete" onclick="deleteSkill(${skill.id})">Delete</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>`;
+        
+      } catch (err) {
+        console.error(err);
+        document.getElementById('skillsContainer').innerHTML = '<p style="color: red;">Error loading skills</p>';
+      }
+    }
+    
+    function openAddModal() {
+      document.getElementById('addModal').classList.add('active');
+    }
+    
+    function closeAddModal() {
+      document.getElementById('addModal').classList.remove('active');
+      document.getElementById('addForm').reset();
+      document.getElementById('addMessage').innerHTML = '';
+    }
+    
+    function openEditModal(skillId, proficiency) {
+      document.getElementById('editModal').classList.add('active');
+      document.getElementById('editSkillId').value = skillId;
+      document.getElementById('editProficiency').value = proficiency;
+    }
+    
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('active');
+      document.getElementById('editMessage').innerHTML = '';
+    }
+    
+    document.getElementById('addForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      data.skill_id = parseInt(data.skill_id);
+      
+      try {
+        const response = await fetch('/api/skills/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        const messageDiv = document.getElementById('addMessage');
+        
+        if (response.ok) {
+          messageDiv.className = 'message success';
+          messageDiv.textContent = result.message || 'Skill added successfully!';
+          setTimeout(() => {
+            closeAddModal();
+            loadMySkills();
+          }, 1500);
+        } else {
+          messageDiv.className = 'message error';
+          messageDiv.textContent = result.error || 'Failed to add skill';
+        }
+      } catch (err) {
+        document.getElementById('addMessage').className = 'message error';
+        document.getElementById('addMessage').textContent = 'Error adding skill';
+      }
+    });
+    
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const skillId = document.getElementById('editSkillId').value;
+      const proficiency = document.getElementById('editProficiency').value;
+      
+      try {
+        const response = await fetch(`/api/skills/${skillId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ proficiency })
+        });
+        
+        const result = await response.json();
+        const messageDiv = document.getElementById('editMessage');
+        
+        if (response.ok) {
+          messageDiv.className = 'message success';
+          messageDiv.textContent = result.message || 'Skill updated successfully!';
+          setTimeout(() => {
+            closeEditModal();
+            loadMySkills();
+          }, 1500);
+        } else {
+          messageDiv.className = 'message error';
+          messageDiv.textContent = result.error || 'Failed to update skill';
+        }
+      } catch (err) {
+        document.getElementById('editMessage').className = 'message error';
+        document.getElementById('editMessage').textContent = 'Error updating skill';
+      }
+    });
+    
+    async function deleteSkill(skillId) {
+      if (!confirm('Are you sure you want to delete this skill?')) return;
+      
+      try {
+        const response = await fetch(`/api/skills/${skillId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+          loadMySkills();
+        } else {
+          alert('Failed to delete skill');
+        }
+      } catch (err) {
+        alert('Error deleting skill');
+      }
+    }
+    
+    loadAllSkills();
+    loadMySkills();
+  </script>
+</body>
+</html>
