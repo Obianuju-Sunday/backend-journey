@@ -146,43 +146,43 @@ const updateInternship = async (req, res) => {
 }
 
 // Delete internship
-// const deleteInternship = async (req, res) => {
-//   const internshipId = req.params.id;
-//   const userId = req.user.userId;
+const deleteInternship = async (req, res) => {
+  const internshipId = req.params.id;
+  const userId = req.user.userId;
 
-//   try {
-//     // Get organisation profile ID
-//     const orgProfile = await pool.query(
-//       'SELECT id FROM organisation_profiles WHERE user_id = $1',
-//       [userId]
-//     );
+  try {
+    // Get organisation profile ID
+    const orgProfile = await pool.query(
+      'SELECT id FROM organisation_profiles WHERE user_id = $1',
+      [userId]
+    );
 
-//     if (orgProfile.rows.length === 0) {
-//       return res.status(404).json({ error: 'organisation profile not found' });
-//     }
+    if (orgProfile.rows.length === 0) {
+      return res.status(404).json({ error: 'organisation profile not found' });
+    }
 
-//     const organisationId = orgProfile.rows[0].id;
+    const organisationId = orgProfile.rows[0].id;
 
-//     // Check if the internship belongs to the organisation
-//     const internship = await pool.query(
-//       'SELECT * FROM internships WHERE id = $1 AND organisation_id = $2',
-//       [internshipId, organisationId]
-//     );
+    // Check if the internship belongs to the organisation
+    const internship = await pool.query(
+      'SELECT * FROM internships WHERE id = $1 AND organisation_id = $2',
+      [internshipId, organisationId]
+    );
 
-//     if (internship.rows.length === 0) {
-//       return res.status(404).json({ error: 'Internship not found or does not belong to your organisation' });
-//     }
+    if (internship.rows.length === 0) {
+      return res.status(404).json({ error: 'Internship not found or does not belong to your organisation' });
+    }
 
-//     // Delete the internship
-//     await pool.query('DELETE FROM internships WHERE id = $1', [internshipId]);
+    // Delete the internship
+    await pool.query('DELETE FROM internships WHERE id = $1', [internshipId]);
 
-//     res.status(200).json({ message: 'Internship deleted successfully' });
+    res.status(200).json({ message: 'Internship deleted successfully' });
 
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// };
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 // const getInternshipApplicationCount = async (req, res) => {
 // Built into getOrgInternships function above
@@ -194,6 +194,6 @@ module.exports = {
   getOrgInternships,
   getInternshipById,
   updateInternship,
-  // deleteInternship
+  deleteInternship,
   // getInternshipApplicationCount
 };

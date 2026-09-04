@@ -6,7 +6,7 @@ const { authMiddleware, isOrganisation } = require('../middleware/auth');
 // Protected routes
 router.post('/create', authMiddleware, isOrganisation, createInternship);
 router.get('/org', authMiddleware, isOrganisation, getOrgInternships);
-// router.post('/delete/:id', authMiddleware, isOrganisation, deleteInternship);
+router.delete('/delete/:id', authMiddleware, isOrganisation, deleteInternship);
 
 
 // Public routes

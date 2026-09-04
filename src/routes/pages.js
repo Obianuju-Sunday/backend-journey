@@ -35,7 +35,7 @@ router.get('/student/browse-internship', (req, res) => {
 });
 
 router.get('/student/skill-profile', (req, res) => {
-  renderPage(res, 'student/skillProfile', { user: null });
+  renderPage(res, 'student/skillProfile', { user: null }); 
 });
 
 router.get('/student/student-profile', (req, res) => {
