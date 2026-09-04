@@ -56,41 +56,8 @@ router.get('/org/profile', (req, res) => {
 });
 
 router.get('/org/internship-applications', (req, res) => {
-  renderPage(res, 'org/internshipApplications', {
+  renderPage(res, 'org/internshipApplications', { 
     user: null,
-
-    internshipTitle: 'Backend Developer Intern',
-
-    applications: [
-
-      {
-        id: 1,
-        student_id: 2,
-        full_name: 'John Doe',
-        student_email: 'john@example.com',
-        program: 'Computer Science',
-        status: 'pending'
-      },
-
-      {
-        id: 2,
-        student_id: 3,
-        full_name: 'Mary Jane',
-        student_email: 'mary@example.com',
-        program: 'Software Engineering',
-        status: 'accepted'
-      },
-
-      {
-        id: 3,
-        student_id: 4,
-        full_name: 'David James',
-        student_email: 'david@example.com',
-        program: 'Information Technology',
-        status: 'rejected'
-      }
-
-    ]
   });
 });
 
