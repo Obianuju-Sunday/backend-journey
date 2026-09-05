@@ -36,3 +36,14 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).render('error', {});
+});
+
+// 500 error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).render('error', {});
+});

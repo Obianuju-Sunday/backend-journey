@@ -47,36 +47,32 @@ const applyToInternship = async (req, res) => {
 
 // Get student's applications
 const getMyApplications = async (req, res) => {
-  const userId = req.user.userId;
-
   try {
-    const studentProfile = await pool.query(
-      'SELECT id FROM student_profiles WHERE user_id = $1',
-      [userId]
-    );
-
-    if (studentProfile.rows.length === 0) {
-      return res.status(404).json({ error: 'Student profile not found' });
-    }
-
-    const studentId = studentProfile.rows[0].id;
+    const userId = req.user.userId;
 
     const applications = await pool.query(
-      `SELECT a.*, i.title, i.location, i.duration, i.stipend, 
-              o.company_name, o.industry
+      `SELECT 
+          a.id,
+          a.status,
+          a.internship_id,
+          i.title as internship_title,
+          i.location,
+          o.company_name
        FROM applications a
        JOIN internships i ON a.internship_id = i.id
        JOIN organisation_profiles o ON i.organisation_id = o.id
-       WHERE a.student_id = $1
-       ORDER BY a.applied_at DESC`,
-      [studentId]
+       WHERE a.student_id = (SELECT id FROM student_profiles WHERE user_id = $1)
+       ORDER BY a.id DESC`,
+      [userId]
     );
 
-    res.status(200).json({ applications: applications.rows });
+    res.json({
+      applications: applications.rows
+    });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Failed to fetch applications' });
   }
 };
 
@@ -164,8 +160,105 @@ const updateApplicationStatus = async (req, res) => {
 
 // Get full details of a specific application (for org)
 const getApplicationDetails = async (req, res) => {
+  const applicationId = req.params.id;
+  const userId = req.user.userId;
 
-}
+  try {
+    // Get organisation profile
+    const orgProfile = await pool.query(
+      'SELECT id FROM organisation_profiles WHERE user_id = $1',
+      [userId]
+    );
+
+    if (orgProfile.rows.length === 0) {
+      return res.status(404).json({
+        error: 'Organisation profile not found'
+      });
+    }
+
+    const orgId = orgProfile.rows[0].id;
+
+    // Get application and student details
+    const application = await pool.query(
+      `SELECT 
+          a.id,
+          a.cover_letter,
+          a.status,
+          a.applied_at,
+          i.id AS internship_id,
+          i.title AS internship_title,
+          s.id AS student_id,
+          s.full_name,
+          s.program,
+          s.year,
+          s.university,
+          s.bio,
+          s.phone,
+          s.location,
+          s.portfolio_link,
+          u.email AS student_email
+       FROM applications a
+       JOIN internships i ON a.internship_id = i.id
+       JOIN student_profiles s ON a.student_id = s.id
+       JOIN users u ON s.user_id = u.id
+       WHERE a.id = $1
+       AND i.organisation_id = $2`,
+      [applicationId, orgId]
+    );
+
+    if (application.rows.length === 0) {
+      return res.status(404).json({
+        error: 'Application not found'
+      });
+    }
+
+    const applicationData = application.rows[0];
+
+    // Get student's skills
+    const skills = await pool.query(
+      `SELECT 
+          s.id,
+          s.skill_name,
+          ss.proficiency
+       FROM student_skills ss
+       JOIN skills s ON ss.skill_id = s.id
+       WHERE ss.student_id = $1
+       ORDER BY s.skill_name`,
+      [applicationData.student_id]
+    );
+
+    res.status(200).json({
+      application: {
+        id: applicationData.id,
+        cover_letter: applicationData.cover_letter,
+        status: applicationData.status,
+        applied_at: applicationData.applied_at,
+        internship_id: applicationData.internship_id,
+        internship_title: applicationData.internship_title,
+
+        student: {
+          id: applicationData.student_id,
+          full_name: applicationData.full_name,
+          email: applicationData.student_email,
+          program: applicationData.program,
+          year: applicationData.year,
+          university: applicationData.university,
+          bio: applicationData.bio,
+          phone: applicationData.phone,
+          location: applicationData.location,
+          portfolio_link: applicationData.portfolio_link,
+          skills: skills.rows
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: 'Server error'
+    });
+  }
+};
 
 // Delete an application (for student)
 const deleteApplication = async (req, res) => {

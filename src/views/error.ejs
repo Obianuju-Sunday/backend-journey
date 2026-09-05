@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error - Beacon</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial; background-color: #efefef; color: #000000; }
+    
+    .navbar { background-color: #2a3f0f; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; }
+    .navbar a { color: #efefef; text-decoration: none; font-size: 24px; font-weight: bold; }
+    
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 200px);
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .error-code { font-size: 120px; color: #c41e3a; font-weight: bold; margin-bottom: 20px; }
+    .error-message { font-size: 32px; color: #2a3f0f; margin-bottom: 20px; }
+    .error-description { font-size: 16px; color: #666; margin-bottom: 40px; max-width: 500px; }
+    
+    .back-btn {
+      background-color: #2a3f0f;
+      color: #efefef;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .back-btn:hover { background-color: #1a2f0a; }
+    
+    .footer { background-color: #2a3f0f; color: #efefef; text-align: center; padding: 20px; margin-top: 50px; }
+  </style>
+</head>
+<body>
+  <%- include('layouts/navbar.ejs') %>
+
+  <div class="error-container">
+    <div class="error-code">404</div>
+    <div class="error-message">Page Not Found</div>
+    <div class="error-description">
+      The page you're looking for doesn't exist. It might have been moved or deleted.
+    </div>
+    <a href="/" class="back-btn">Go Back Home</a>
+  </div>
+
+  <%- include('layouts/footer.ejs') %>
+</body>
+</html>

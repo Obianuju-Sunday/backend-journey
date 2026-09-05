@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - Beacon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial;
+            background-color: #efefef;
+            color: #000000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        h1 {
+            color: #2a3f0f;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #2a3f0f;
+            color: #efefef;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-accepted {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0 5px;
+            font-size: 12px;
+        }
+
+        .accept-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .accept-btn:hover {
+            background-color: #218838;
+        }
+
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .reject-btn:hover {
+            background-color: #c82333;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .empty h2 {
+            color: #2a3f0f;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background-color: #2a3f0f;
+            color: #efefef;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../layouts/navbar') %>
+
+
+        <div class="container">
+            <h2 style="margin: 0; font-size: 28px;">Applications </h2>
+            <br>
+
+            <div id="applicationsContainer">
+                <p>Loading applications...</p>
+            </div>
+        </div>
+
+        <%- include('../layouts/footer') %>
+
+            <script>
+                // const token = localStorage.getItem('token');
+                // const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+                if (!token || user.role !== 'organisation') {
+                    window.location.href = '/auth/login';
+                }
+
+                async function loadApplications() {
+                    try {
+                        const response = await fetch('/api/internship/org', {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+
+                        const data = await response.json();
+                        const container = document.getElementById('applicationsContainer');
+
+                        if (!data.applications || data.applications.length === 0) {
+                            container.innerHTML = `
+            <div class="empty">
+              <h2>No applications yet</h2>
+              <p>When students apply, they'll show up here</p>
+            </div>
+          `;
+                            return;
+                        }
+
+                        // Build table
+                        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>Internship</th>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Program</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+                        data.applications.forEach(app => {
+                            const statusClass = `status-${app.status}`;
+                            html += `
+            <tr>
+              <td><strong>${app.internship_title || 'N/A'}</strong></td>
+              <td>${app.full_name || 'N/A'}</td>
+              <td>${app.student_email || 'N/A'}</td>
+              <td>${app.program || 'N/A'}</td>
+              <td><span class="status ${statusClass}">${app.status.toUpperCase()}</span></td>
+              <td>
+                ${app.status === 'pending' ? `
+                  <button class="action-btn accept-btn" onclick="updateStatus(${app.id}, 'accepted')">Accept</button>
+                  <button class="action-btn reject-btn" onclick="updateStatus(${app.id}, 'rejected')">Reject</button>
+                ` : `
+                  <span style="color: #999; font-size: 12px;">No actions</span>
+                `}
+              </td>
+            </tr>
+          `;
+                        });
+
+                        html += `
+            </tbody>
+          </table>
+        `;
+
+                        container.innerHTML = html;
+
+                    } catch (err) {
+                        console.error(err);
+                        document.getElementById('applicationsContainer').innerHTML = '<p style="color: red;">Error loading applications</p>';
+                    }
+                }
+
+                async function updateStatus(applicationId, newStatus) {
+                    try {
+                        const response = await fetch('/api/application/update-status', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                application_id: applicationId,
+                                status: newStatus
+                            })
+                        });
+
+                        if (response.ok) {
+                            alert(`✅ Application ${newStatus}!`);
+                            loadApplications(); // Reload
+                        } else {
+                            const data = await response.json();
+                            alert(`❌ Error: ${data.error}`);
+                        }
+                    } catch (err) {
+                        alert('❌ Error updating status');
+                    }
+                }
+
+                loadApplications();
+            </script>
+</body>
+
+</html>

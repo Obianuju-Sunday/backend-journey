@@ -1,178 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Applications - Internship Portal</title>
+  <title>My Applications - Beacon</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
+    html,
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      font-family: Arial;
       background-color: #efefef;
-      color: #1a1a1a;
+      color: #000000;
     }
+
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 40px 20px;
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
     }
+
     h1 {
       color: #2a3f0f;
       margin-bottom: 30px;
-      font-size: 32px;
     }
-    table {
+
+    .app-card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #2a3f0f;
       width: 100%;
-      border-collapse: collapse;
-      background-color: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    thead {
-      background-color: #2a3f0f;
-      color: #efefef;
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
     }
-    th {
-      padding: 15px;
-      text-align: left;
-      font-weight: 600;
+
+    .app-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2a3f0f;
     }
-    td {
-      padding: 15px;
-      border-bottom: 1px solid #e8e8e8;
+
+    .app-date {
+      color: #666;
+      font-size: 12px;
     }
-    tr:hover {
-      background-color: #f9f9f9;
-    }
+
     .status {
       display: inline-block;
-      padding: 6px 12px;
+      padding: 8px 15px;
       border-radius: 20px;
-      font-size: 12px;
       font-weight: 600;
+      margin-top: 10px;
     }
+
     .status-pending {
       background-color: #fff3cd;
       color: #856404;
     }
+
     .status-accepted {
       background-color: #d4edda;
       color: #155724;
     }
+
     .status-rejected {
       background-color: #f8d7da;
       color: #721c24;
     }
-    .empty-state {
+
+    .empty {
       text-align: center;
       padding: 60px 20px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 5px;
     }
-    .empty-state h2 {
+
+    .empty h2 {
       color: #2a3f0f;
       margin-bottom: 10px;
     }
-    .empty-state p {
-      color: #666;
-      margin-bottom: 20px;
-    }
-    .btn {
+
+    .footer {
       background-color: #2a3f0f;
       color: #efefef;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 5px;
-      text-decoration: none;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .btn:hover {
-      background-color: #1e3410;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+      /* ← THIS STICKS IT DOWN */
     }
   </style>
 </head>
+
 <body>
   <%- include('../layouts/navbar') %>
-  
-  <div class="container">
-    <h1>My Applications</h1>
-    
-    <div id="applicationsContainer">
-      <p>Loading applications...</p>
+
+    <div class="container">
+
+      <h2 style="margin: 0; font-size: 28px;">My Applications</h2>
+      <br>
+      <div id="applicationsContainer">
+        <p>Loading your applications...</p>
+      </div>
     </div>
-  </div>
-  
-  <%- include('../layouts/footer') %>
-  
-  <script>
-    // const token = localStorage.getItem('token');
-    // const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
-    if (!token || user.role !== 'student') {
-      window.location.href = '/auth/login';
-    }
-    
-    async function loadApplications() {
-      try {
-        const response = await fetch('/api/application/my-applications', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        const data = await response.json();
-        const container = document.getElementById('applicationsContainer');
-        
-        if (!data.applications || data.applications.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state">
+
+    <%- include('../layouts/footer') %>
+
+      <script>
+        // const token = localStorage.getItem('token');
+        // const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        if (!token || user.role !== 'student') {
+          window.location.href = '/auth/login';
+        }
+
+        async function loadMyApplications() {
+          try {
+            const response = await fetch('/api/application/my-applications', {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const data = await response.json();
+            const container = document.getElementById('applicationsContainer');
+
+            if (!data.applications || data.applications.length === 0) {
+              container.innerHTML = `
+            <div class="empty">
               <h2>No applications yet</h2>
-              <p>Start exploring internship opportunities</p>
-              <a href="/student/browse" class="btn">Browse Internships</a>
+              <p>Start applying to internships to track them here!</p>
             </div>
           `;
-          return;
+              return;
+            }
+
+            let html = '';
+            data.applications.forEach(app => {
+              const statusClass = `status-${app.status}`;
+
+              html += `
+    <div class="app-card">
+      <div class="app-header">
+        <div>
+          <div class="app-title">${app.internship_title || 'Internship'}</div>
+          <div class="app-date">${app.company_name}</div>
+          <span class="status ${statusClass}">${app.status.toUpperCase()}</span>
+        </div>
+      </div>
+    </div>
+  `;
+            });
+
+            container.innerHTML = html;
+
+          } catch (err) {
+            console.error(err);
+            document.getElementById('applicationsContainer').innerHTML = '<p style="color: red;">Error loading applications</p>';
+          }
         }
-        
-        container.innerHTML = `
-          <table>
-            <thead>
-              <tr>
-                <th>Internship Title</th>
-                <th>Company</th>
-                <th>Status</th>
-                <th>Applied On</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.applications.map(app => `
-                <tr>
-                  <td><strong>${app.title}</strong></td>
-                  <td>${app.company_name}</td>
-                  <td>
-                    <span class="status status-${app.status}">
-                      ${app.status.charAt(0).toUpperCase() + app.status.slice(1)}
-                    </span>
-                  </td>
-                  <td>${new Date(app.applied_at).toLocaleDateString()}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
-        
-      } catch (err) {
-        console.error(err);
-        document.getElementById('applicationsContainer').innerHTML = '<p style="color: red;">Error loading applications</p>';
-      }
-    }
-    
-    loadApplications();
-  </script>
+
+        loadMyApplications();
+      </script>
 </body>
+
 </html>

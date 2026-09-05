@@ -22,11 +22,11 @@ router.get('/auth/login', (req, res) => {
 });
 
 router.get('/auth/register-student', (req, res) => {
-  renderPage(res, 'auth/register-student', { user: null });
+  renderPage(res, 'auth/registerStudent', { user: null });
 });
 
 router.get('/auth/register-organisation', (req, res) => {
-  renderPage(res, 'auth/register-organisation', { user: null });
+  renderPage(res, 'auth/registerOrganisation', { user: null });
 });
 
 // ========== STUDENT PAGES ==========
@@ -58,6 +58,13 @@ router.get('/org/profile', (req, res) => {
 router.get('/org/internship-applications', (req, res) => {
   renderPage(res, 'org/internshipApplications', { 
     user: null,
+  });
+});
+
+router.get('/org/application/:id', (req, res) => {
+  res.render('org/applicationDetails', {
+    user: req.user,
+    applicationId: req.params.id
   });
 });
 

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details - Beacon</title>
+</head>
+
+<body>
+
+    <%- include('../layouts/navbar') %>
+
+    <main>
+        <div id="applicationContainer">
+            <p>Loading application...</p>
+        </div>
+    </main>
+
+    <%- include('../layouts/footer') %>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        const applicationId = '<%= applicationId %>';
+
+        if (!token || !user || user.role !== 'organisation') {
+            window.location.href = '/auth/login';
+        }
+
+        async function loadApplication() {
+            try {
+                const response = await fetch(`/api/application/${applicationId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load application');
+                }
+
+                const application = data.application;
+                const student = application.student;
+
+                const skills = student.skills.length > 0
+                    ? student.skills.map(skill => `
+                        <li>
+                            ${skill.skill_name} - ${skill.proficiency}
+                        </li>
+                    `).join('')
+                    : '<li>No skills listed</li>';
+
+                document.getElementById('applicationContainer').innerHTML = `
+                    <h1>Application Details</h1>
+
+                    <section>
+                        <h2>${student.full_name}</h2>
+
+                        <p><strong>Email:</strong> ${student.email}</p>
+                        <p><strong>Programme:</strong> ${student.program || 'Not provided'}</p>
+                        <p><strong>Year:</strong> ${student.year || 'Not provided'}</p>
+                        <p><strong>University:</strong> ${student.university || 'Not provided'}</p>
+                        <p><strong>Location:</strong> ${student.location || 'Not provided'}</p>
+                        <p><strong>Phone:</strong> ${student.phone || 'Not provided'}</p>
+
+                        <p>
+                            <strong>Portfolio:</strong>
+                            ${
+                                student.portfolio_link
+                                ? `<a href="${student.portfolio_link}" target="_blank">View Portfolio</a>`
+                                : 'Not provided'
+                            }
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2>Bio</h2>
+                        <p>${student.bio || 'No bio provided.'}</p>
+                    </section>
+
+                    <section>
+                        <h2>Skills</h2>
+                        <ul>
+                            ${skills}
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>Internship</h2>
+                        <p><strong>Role:</strong> ${application.internship.title}</p>
+                    </section>
+
+                    <section>
+                        <h2>Cover Letter</h2>
+                        <p>${application.cover_letter || 'No cover letter provided.'}</p>
+                    </section>
+
+                    <section>
+                        <h2>Application Status</h2>
+                        <p>${application.status.toUpperCase()}</p>
+                    </section>
+
+                    ${
+                        application.status === 'pending'
+                        ? `
+                            <button onclick="updateStatus('accepted')">
+                                Accept Application
+                            </button>
+
+                            <button onclick="updateStatus('rejected')">
+                                Reject Application
+                            </button>
+                        `
+                        : `
+                            <p>This application has already been ${application.status}.</p>
+                        `
+                    }
+                `;
+
+            } catch (error) {
+                console.error(error);
+
+                document.getElementById('applicationContainer').innerHTML = `
+                    <p>Unable to load application.</p>
+                `;
+            }
+        }
+
+        async function updateStatus(newStatus) {
+            try {
+                const response = await fetch('/api/application/update-status', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        application_id: applicationId,
+                        status: newStatus
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to update application');
+                }
+
+                alert(`Application ${newStatus}!`);
+
+                loadApplication();
+
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        loadApplication();
+    </script>
+
+</body>
+
+</html>
