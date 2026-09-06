@@ -65,6 +65,9 @@
       border-radius: 8px;
       border-left: 4px solid #2a3f0f;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      min-height: 350px;
+      display: flex;
+      flex-direction: column;
     }
 
     .internship-card h3 {
@@ -93,7 +96,7 @@
     .action-buttons {
       display: flex;
       gap: 10px;
-      margin-top: 15px;
+      margin-top: auto;
     }
 
     .btn-small {
@@ -404,6 +407,18 @@
       </div>
     </div>
 
+    <!-- View Student Profile Modal -->
+    <div class="modal" id="studentProfileModal">
+      <div class="modal-content" style="max-width: 600px;">
+        <span class="close-modal" onclick="closeStudentProfileModal()">&times;</span>
+        <h2 id="studentProfileTitle" style="color: #2a3f0f; margin-bottom: 20px;">Student Profile</h2>
+
+        <div id="studentProfileContainer" style="max-height: 70vh; overflow-y: auto;">
+          <p>Loading profile...</p>
+        </div>
+      </div>
+    </div>
+
     <%- include('../layouts/footer') %>
 
       <script>
@@ -523,8 +538,6 @@
             });
 
             const data = await response.json();
-
-            // Filter applications for this internship
             const filtered = data.applications.filter(app => app.internship_id === internshipId);
 
             const container = document.getElementById('applicationsListContainer');
@@ -541,28 +554,32 @@
               const coverLetter = app.cover_letter || 'No cover letter provided';
 
               html += `
-            <div class="application-item">
-              <div class="app-student-info">${app.full_name}</div>
-              <div class="app-email">📧 ${app.student_email}</div>
-              <div class="app-program">📚 ${app.program || 'N/A'}</div>
-
-              <span class="app-status ${statusClass}">${app.status.toUpperCase()}</span>
-
-              <div class="app-cover-letter">
-                <strong>Cover Letter:</strong><br>
-                ${coverLetter}
+        <div class="application-item">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+            <div>
+              <div class="app-student-info" style="cursor: pointer; color: #2a3f0f; text-decoration: underline;" onclick="viewStudentProfile(${app.student_id}, '${app.full_name}')">
+                ${app.full_name}
               </div>
-
-              ${app.status === 'pending' ? `
-                <div class="app-buttons">
-                  <button class="action-btn accept-btn" onclick="updateStatus(${app.id}, 'accepted')"> Accept</button>
-                  <button class="action-btn reject-btn" onclick="updateStatus(${app.id}, 'rejected')"> Reject</button>
-                </div>
-              ` : `
-                <div style="color: #999; font-size: 12px; margin-top: 10px;">Already ${app.status}</div>
-              `}
+              <div class="app-email">📧 ${app.student_email}</div>
             </div>
-          `;
+            <span class="app-status ${statusClass}">${app.status.toUpperCase()}</span>
+          </div>
+
+          <div class="app-cover-letter">
+            <strong>Cover Letter:</strong><br>
+            ${coverLetter}
+          </div>
+
+          ${app.status === 'pending' ? `
+            <div class="app-buttons">
+              <button class="action-btn accept-btn" onclick="updateStatus(${app.id}, 'accepted')">✓ Accept</button>
+              <button class="action-btn reject-btn" onclick="updateStatus(${app.id}, 'rejected')">✗ Reject</button>
+            </div>
+          ` : `
+            <div style="color: #999; font-size: 12px; margin-top: 10px;">Already ${app.status}</div>
+          `}
+        </div>
+      `;
             });
 
             container.innerHTML = html;
@@ -589,13 +606,13 @@
             });
 
             if (response.ok) {
-              alert(`✅ Application ${newStatus}!`);
+              alert(`Application ${newStatus}!`);
               viewApplications(currentInternshipId, document.getElementById('modalTitle').textContent.replace('Applications for: ', ''));
             } else {
-              alert('❌ Error updating status');
+              alert('Error updating status');
             }
           } catch (err) {
-            alert('❌ Error updating status');
+            alert('Error updating status');
           }
         }
 
@@ -627,6 +644,76 @@
           }
         }
 
+        async function viewStudentProfile(studentId, studentName) {
+          try {
+            document.getElementById('studentProfileTitle').textContent = studentName;
+
+            // Fetch student profile
+            const response = await fetch(`/api/users/student/profile/${studentId}`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+              document.getElementById('studentProfileContainer').innerHTML = '<p style="color: red;">Error loading profile</p>';
+              document.getElementById('studentProfileModal').classList.add('active');
+              return;
+            }
+
+            const profile = await response.json();
+
+            // Fetch student skills
+            let skillsHtml = '';
+            try {
+              const skillsResponse = await fetch(`/api/skills/student/${studentId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+
+              const skillsData = await skillsResponse.json();
+
+              if (skillsData.skills && skillsData.skills.length > 0) {
+                skillsHtml = '<div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e8e8e8;"><h3 style="color: #2a3f0f; margin-bottom: 15px;">Skills</h3><div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+
+                skillsData.skills.forEach(skill => {
+                  skillsHtml += `
+            <span style="background-color: #2a3f0f; color: white; padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+              ${skill.skill_name} • ${skill.proficiency}
+            </span>
+          `;
+                });
+
+                skillsHtml += '</div></div>';
+              }
+            } catch (err) {
+              console.error('Error loading skills:', err);
+            }
+
+            const html = `
+      <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; border-left: 3px solid #2a3f0f;">
+        <p><strong>Email:</strong> ${profile.email || 'N/A'}</p>
+        <p><strong>Program:</strong> ${profile.program || 'N/A'}</p>
+        <p><strong>Year:</strong> ${profile.year || 'N/A'}</p>
+        <p><strong>Phone:</strong> ${profile.phone || 'Not set'}</p>
+        <p><strong>Location:</strong> ${profile.location || 'Not set'}</p>
+        <p><strong>Bio:</strong> ${profile.bio || 'Not set'}</p>
+        <p><strong>Portfolio:</strong> ${profile.portfolio_link ? `<a href="${profile.portfolio_link}" target="_blank">${profile.portfolio_link}</a>` : 'Not set'}</p>
+        <p><strong>University:</strong> ${profile.university || 'Not set'}</p>
+      </div>
+      ${skillsHtml}
+    `;
+
+            document.getElementById('studentProfileContainer').innerHTML = html;
+            document.getElementById('studentProfileModal').classList.add('active');
+
+          } catch (err) {
+            console.error(err);
+            document.getElementById('studentProfileContainer').innerHTML = '<p style="color: red;">Error loading profile</p>';
+          }
+        }
+
+        function closeStudentProfileModal() {
+          document.getElementById('studentProfileModal').classList.remove('active');
+        }
+
         // Close modal when clicking outside
         document.getElementById('postModal').addEventListener('click', (e) => {
           if (e.target.id === 'postModal') closePostModal();
@@ -634,6 +721,10 @@
 
         document.getElementById('applicationsModal').addEventListener('click', (e) => {
           if (e.target.id === 'applicationsModal') closeApplicationsModal();
+        });
+
+        document.getElementById('studentProfileModal').addEventListener('click', (e) => {
+          if (e.target.id === 'studentProfileModal') closeStudentProfileModal();
         });
 
         loadInternships();

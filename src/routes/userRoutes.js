@@ -12,7 +12,7 @@ router.patch('/organisation/profile', authMiddleware, isOrganisation, updateOrgP
 
 
 // Public - view profiles
-router.get('/student/:id', getStudentProfilePublic);
-router.get('/organisation/:id', getOrgProfilePublic);
+router.get('/student/profile/:id', getStudentProfilePublic);
+router.get('/organisation/profile/:id', getOrgProfilePublic);
 
 module.exports = router;

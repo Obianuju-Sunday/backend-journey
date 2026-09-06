@@ -5,7 +5,24 @@ const getStudentProfile = async (req, res) => {
   try {
     const userId = req.user.userId
 
-    const profile = await pool.query('SELECT id, full_name, program, year, university, bio, phone, location, portfolio_link, created_at FROM student_profiles WHERE user_id = $1', [userId]);
+    const profile = await pool.query(
+      `SELECT 
+          sp.id,
+          sp.full_name,
+          sp.program,
+          sp.year,
+          sp.university,
+          sp.bio,
+          sp.phone,
+          sp.location,
+          sp.portfolio_link,
+          sp.created_at,
+          u.email
+       FROM student_profiles sp
+       JOIN users u ON sp.user_id = u.id
+       WHERE sp.user_id = $1`,
+      [userId]
+    );
 
     if (profile.rows.length === 0) {
       return res.status(404).json({ error: 'Profile not found' });
@@ -17,10 +34,10 @@ const getStudentProfile = async (req, res) => {
       `SELECT
         s.skill_name,
         ss.proficiency
-      FROM student_skills ss
-      JOIN skills s ON ss.skill_id = s.id
-      WHERE ss.student_id = $1
-      ORDER BY s.skill_name`,
+       FROM student_skills ss
+       JOIN skills s ON ss.skill_id = s.id
+       WHERE ss.student_id = $1
+       ORDER BY s.skill_name`,
       [studentProfileId]
     );
 
@@ -41,7 +58,18 @@ const getStudentProfilePublic = async (req, res) => {
     const studentId = req.params.id;
 
     const studentProfile = await pool.query(
-      'SELECT id, full_name, program, year, bio, university, portfolio_link FROM student_profiles WHERE id = $1',
+      `SELECT 
+          sp.id,
+          sp.full_name,
+          sp.program,
+          sp.year,
+          sp.bio,
+          sp.university,
+          sp.portfolio_link,
+          u.email
+       FROM student_profiles sp
+       JOIN users u ON sp.user_id = u.id
+       WHERE sp.id = $1`,
       [studentId]
     );
 
@@ -121,27 +149,39 @@ const getOrgProfilePublic = async (req, res) => {
 const updateStudentProfile = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const updateData = req.body;
-        
+
+    const allowedFields = ['full_name', 'bio', 'phone', 'location', 'portfolio_link', 'program', 'year', 'university'];
+    const updateData = {};
+
+    for (const [key, value] of Object.entries(req.body)) {
+      if (allowedFields.includes(key)) {
+        updateData[key] = value;
+      }
+    }
+
     const fields = [];
     const values = [];
     let placeholderIndex = 1;
-    
+
     for (const [key, value] of Object.entries(updateData)) {
       fields.push(`${key} = $${placeholderIndex}`);
       values.push(value);
       placeholderIndex++;
     }
-    
+
+    if (fields.length === 0) {
+      return res.status(400).json({ error: 'No valid fields to update' });
+    }
+
     values.push(userId);
     const query = `UPDATE student_profiles SET ${fields.join(', ')} WHERE user_id = $${placeholderIndex} RETURNING *`;
-    
+
     const result = await pool.query(query, values);
     res.status(200).json({
       message: 'Profile updated',
       profile: result.rows[0]
     });
-    
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -151,7 +191,15 @@ const updateStudentProfile = async (req, res) => {
 const updateOrgProfile = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const updateData = req.body;
+
+    const allowedFields = ['company_name', 'industry', 'location', 'website', 'niche', 'description', 'contact_email'];
+    const updateData = {};
+
+    for (const [key, value] of Object.entries(req.body)) {
+      if (allowedFields.includes(key)) {
+        updateData[key] = value;
+      }
+    }
 
     const fields = [];
     const values = [];
@@ -163,10 +211,19 @@ const updateOrgProfile = async (req, res) => {
       placeholderIndex++;
     }
 
+    if (fields.length === 0) {
+      return res.status(400).json({ error: 'No valid fields to update' });
+    }
+
     values.push(userId);
     const query = `UPDATE organisation_profiles SET ${fields.join(', ')} WHERE user_id = $${placeholderIndex} RETURNING *`;
 
     const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Organization profile not found' });
+    }
+
     res.status(200).json({
       message: 'Profile updated',
       profile: result.rows[0]
@@ -177,7 +234,6 @@ const updateOrgProfile = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 }
-
 
 
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register as Organization - Internship Portal</title>
+  <title>Register as Organization - Beacon</title>
   <style>
     * {
       margin: 0;
@@ -109,8 +109,13 @@
       
       <form id="registerForm">
         <div class="form-group">
-          <label for="email">Organization Email</label>
-          <input type="email" id="email" name="email" required placeholder="contact@company.com">
+          <label for="company_name">Company Name</label>
+          <input type="text" id="company_name" name="company_name" required placeholder="Your company name">
+        </div>
+
+        <div class="form-group">
+          <label for="contact_email">Contact Email</label>
+          <input type="email" id="contact_email" name="contact_email" required placeholder="contact@company.com">
         </div>
         
         <div class="form-group">
@@ -119,15 +124,25 @@
         </div>
         
         <div class="form-group">
-          <label for="company_name">Company Name</label>
-          <input type="text" id="company_name" name="company_name" required placeholder="Your company name">
-        </div>
-        
-        <div class="form-group">
           <label for="industry">Industry</label>
           <input type="text" id="industry" name="industry" required placeholder="e.g. Software Development">
         </div>
-        
+
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" required placeholder="e.g. Lagos, Nigeria">
+        </div>
+
+        <div class="form-group">
+          <label for="website">Website</label>
+          <input type="url" id="website" name="website" required placeholder="https://www.company.com">
+        </div>
+
+        <!-- <div class="form-group">
+          <label for="niche">Niche</label>
+          <input type="text" id="niche" name="niche" required placeholder="e.g. Web Development">
+        </div> -->
+
         <button type="submit" class="btn">Register Organization</button>
         <div id="message"></div>
       </form>
@@ -148,11 +163,13 @@
         email: document.getElementById('email').value,
         password: document.getElementById('password').value,
         company_name: document.getElementById('company_name').value,
-        industry: document.getElementById('industry').value
+        industry: document.getElementById('industry').value,
+        location: document.getElementById('location').value,
+        website: document.getElementById('website').value
       };
       
       try {
-        const response = await fetch('/api/auth/register/organization', {
+        const response = await fetch('/api/auth/register/organisation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)

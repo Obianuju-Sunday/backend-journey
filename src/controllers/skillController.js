@@ -168,10 +168,34 @@ const deleteStudentSkill = async (req, res) => {
   }
 };
 
+const getStudentSkillsById = async (req, res) => {
+  const studentId = req.params.studentId;
+
+  try {
+    const skills = await pool.query(
+      `SELECT s.id, s.skill_name, ss.proficiency
+       FROM student_skills ss
+       JOIN skills s ON ss.skill_id = s.id
+       WHERE ss.student_id = $1
+       ORDER BY s.skill_name`,
+      [studentId]
+    );
+
+    res.json({
+      skills: skills.rows
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 module.exports = {
   getAllSkills,
   addStudentSkill,
   getStudentSkills,
+  getStudentSkillsById,
   updateStudentSkill,
   deleteStudentSkill
 };

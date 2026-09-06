@@ -35,7 +35,7 @@ app.use('/api/users', userRoutes);
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
+}); 
 
 // 404 handler
 app.use((req, res) => {
