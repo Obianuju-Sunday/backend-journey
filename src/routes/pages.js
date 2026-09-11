@@ -21,11 +21,11 @@ router.get('/auth/login', (req, res) => {
   renderPage(res, 'auth/login', { user: null });
 });
 
-router.get('/auth/register-student', (req, res) => {
+router.get('/auth/register/student', (req, res) => {
   renderPage(res, 'auth/registerStudent', { user: null });
 });
 
-router.get('/auth/register-organisation', (req, res) => {
+router.get('/auth/register/organisation', (req, res) => {
   renderPage(res, 'auth/registerOrganisation', { user: null });
 });
 

@@ -10,7 +10,7 @@
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   const navbarContent = document.getElementById('navbarContent');
-  const currentPath = window.location.pathname; // Get current page
+  const currentPath = window.location.pathname;
 
   if (token && user) {
     if (user.role === 'student') {
@@ -51,8 +51,8 @@
   } else {
     navbarContent.innerHTML = `
       <a href="/auth/login" style="color: #efefef; text-decoration: none; font-weight: 600;">Login</a>
-      <a href="/auth/register-student" style="color: #efefef; text-decoration: none; font-weight: 600;">Register Student</a>
-      <a href="/auth/register-organisation" style="color: #efefef; text-decoration: none; font-weight: 600;">Register Org</a>
+      <a href="/auth/register/student" style="color: #efefef; text-decoration: none; font-weight: 600;">Register Student</a>
+      <a href="/auth/register/organisation" style="color: #efefef; text-decoration: none; font-weight: 600;">Register Org</a>
     `;
   }
 

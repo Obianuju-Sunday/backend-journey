@@ -254,151 +254,351 @@
         async function loadProfile() {
           try {
             const response = await fetch('/api/users/student/profile', {
-              headers: { 'Authorization': `Bearer ${token}` }
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
             });
 
             const data = await response.json();
             const container = document.getElementById('profileInfo');
 
-            if (response.ok) {
-              const profile = data;
-              container.innerHTML = `
-            <div class="info-item">
-              <label>Full Name</label>
-              <span>${profile.full_name || 'Not set'}</span>
-            </div>
-            <div class="info-item">
-              <label>Email</label>
-              <span>${user.email}</span>
-            </div>
-            <div class="info-item">
-              <label>Program</label>
-              <span>${profile.program || 'Not set'}</span>
-            </div>
-            <div class="info-item">
-              <label>Year</label>
-              <span>${profile.year || 'Not set'}</span>
-            </div>
-            <div class="info-item">
-              <label>Location</label>
-              <span>${profile.location || 'Not set'}</span>
-            </div>
-            <div class="info-item">
-              <label>Phone</label>
-              <span>${profile.phone || 'Not set'}</span>
-            </div>
-            <div class="info-item" style="grid-column: 1 / -1;">
-              <label>Bio</label>
-              <span>${profile.bio || 'Not set'}</span>
-            </div>
-            <div class="info-item" style="grid-column: 1 / -1;">
-              <label>Portfolio</label>
-              <span>${profile.portfolio_link ? `<a href="${profile.portfolio_link}" target="_blank">${profile.portfolio_link}</a>` : 'Not set'}</span>
-            </div>
-          `;
-
-              // Fill edit form
-              document.getElementById('editFullName').value = profile.full_name || '';
-              document.getElementById('editBio').value = profile.bio || '';
-              document.getElementById('editPhone').value = profile.phone || '';
-              document.getElementById('editLocation').value = profile.location || '';
-              document.getElementById('editPortfolio').value = profile.portfolio_link || '';
-            } else {
-              container.innerHTML = '<p style="color: red;">Error loading profile</p>';
+            if (!response.ok) {
+              container.innerHTML = '<p>Could not load profile.</p>';
+              return;
             }
+
+            const profile = data;
+
+            // Clear the container
+            container.innerHTML = '';
+
+            // Full Name
+            const fullNameItem = document.createElement('div');
+            fullNameItem.className = 'info-item';
+
+            const fullNameLabel = document.createElement('label');
+            fullNameLabel.textContent = 'Full Name';
+
+            const fullNameSpan = document.createElement('span');
+            fullNameSpan.textContent = profile.full_name || 'Not set';
+
+            fullNameItem.appendChild(fullNameLabel);
+            fullNameItem.appendChild(fullNameSpan);
+
+            // Email
+            const emailItem = document.createElement('div');
+            emailItem.className = 'info-item';
+
+            const emailLabel = document.createElement('label');
+            emailLabel.textContent = 'Email';
+
+            const emailSpan = document.createElement('span');
+            emailSpan.textContent = user.email || 'Not set';
+
+            emailItem.appendChild(emailLabel);
+            emailItem.appendChild(emailSpan);
+
+            // Program
+            const programItem = document.createElement('div');
+            programItem.className = 'info-item';
+
+            const programLabel = document.createElement('label');
+            programLabel.textContent = 'Program';
+
+            const programSpan = document.createElement('span');
+            programSpan.textContent = profile.program || 'Not set';
+
+            programItem.appendChild(programLabel);
+            programItem.appendChild(programSpan);
+
+            // Year
+            const yearItem = document.createElement('div');
+            yearItem.className = 'info-item';
+
+            const yearLabel = document.createElement('label');
+            yearLabel.textContent = 'Year';
+
+            const yearSpan = document.createElement('span');
+            yearSpan.textContent = profile.year || 'Not set';
+
+            yearItem.appendChild(yearLabel);
+            yearItem.appendChild(yearSpan);
+
+            // Location
+            const locationItem = document.createElement('div');
+            locationItem.className = 'info-item';
+
+            const locationLabel = document.createElement('label');
+            locationLabel.textContent = 'Location';
+
+            const locationSpan = document.createElement('span');
+            locationSpan.textContent = profile.location || 'Not set';
+
+            locationItem.appendChild(locationLabel);
+            locationItem.appendChild(locationSpan);
+
+            // Phone
+            const phoneItem = document.createElement('div');
+            phoneItem.className = 'info-item';
+
+            const phoneLabel = document.createElement('label');
+            phoneLabel.textContent = 'Phone';
+
+            const phoneSpan = document.createElement('span');
+            phoneSpan.textContent = profile.phone || 'Not set';
+
+            phoneItem.appendChild(phoneLabel);
+            phoneItem.appendChild(phoneSpan);
+
+            // Bio
+            const bioItem = document.createElement('div');
+            bioItem.className = 'info-item';
+            bioItem.style.gridColumn = '1 / -1';
+
+            const bioLabel = document.createElement('label');
+            bioLabel.textContent = 'Bio';
+
+            const bioSpan = document.createElement('span');
+            bioSpan.textContent = profile.bio || 'Not set';
+
+            bioItem.appendChild(bioLabel);
+            bioItem.appendChild(bioSpan);
+
+            // Portfolio
+            const portfolioItem = document.createElement('div');
+            portfolioItem.className = 'info-item';
+            portfolioItem.style.gridColumn = '1 / -1';
+
+            const portfolioLabel = document.createElement('label');
+            portfolioLabel.textContent = 'Portfolio';
+
+            portfolioItem.appendChild(portfolioLabel);
+
+            if (profile.portfolio_link) {
+              const portfolioLink = document.createElement('a');
+
+              portfolioLink.textContent = profile.portfolio_link;
+              portfolioLink.href = profile.portfolio_link;
+              portfolioLink.target = '_blank';
+              portfolioLink.rel = 'noopener noreferrer';
+
+              portfolioItem.appendChild(portfolioLink);
+            } else {
+              const portfolioText = document.createElement('span');
+              portfolioText.textContent = 'Not set';
+
+              portfolioItem.appendChild(portfolioText);
+            }
+
+            // Add everything to the page
+            container.appendChild(fullNameItem);
+            container.appendChild(emailItem);
+            container.appendChild(programItem);
+            container.appendChild(yearItem);
+            container.appendChild(locationItem);
+            container.appendChild(phoneItem);
+            container.appendChild(bioItem);
+            container.appendChild(portfolioItem);
+
+            // Fill edit form
+            document.getElementById('editFullName').value =
+              profile.full_name || '';
+
+            document.getElementById('editBio').value =
+              profile.bio || '';
+
+            document.getElementById('editPhone').value =
+              profile.phone || '';
+
+            document.getElementById('editLocation').value =
+              profile.location || '';
+
+            document.getElementById('editPortfolio').value =
+              profile.portfolio_link || '';
 
             loadStudentSkills();
 
           } catch (err) {
             console.error(err);
-            document.getElementById('profileInfo').innerHTML = '<p style="color: red;">Error loading profile</p>';
+
+            document.getElementById('profileInfo').innerHTML =
+              '<p>Could not load profile.</p>';
           }
         }
+
 
         async function loadStudentSkills() {
           try {
             const response = await fetch('/api/skills/my-skills', {
-              headers: { 'Authorization': `Bearer ${token}` }
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
             });
 
             const data = await response.json();
-            const skillsContainer = document.getElementById('skillsContainer');
+            const skillsContainer =
+              document.getElementById('skillsContainer');
+
+            skillsContainer.innerHTML = '';
 
             if (!data.skills || data.skills.length === 0) {
-              skillsContainer.innerHTML = `
-        <div class="info-item" style="grid-column: 1 / -1; ">
-          <label>Skills</label>
-          <div style="color: #999;">
-            No skills added yet. 
-            <a href="/student/skill-profile" style="color: #2a3f0f; font-weight: bold;">Add skills</a>
-          </div>
-        </div>
-      `;
+              const skillItem = document.createElement('div');
+
+              skillItem.className = 'info-item';
+              skillItem.style.gridColumn = '1 / -1';
+
+              const label = document.createElement('label');
+              label.textContent = 'Skills';
+
+              const message = document.createElement('div');
+
+              message.style.color = '#999';
+              message.textContent = 'No skills added yet. ';
+
+              const link = document.createElement('a');
+
+              link.href = '/student/skill-profile';
+              link.textContent = 'Add skills';
+              link.style.color = '#2a3f0f';
+              link.style.fontWeight = 'bold';
+
+              message.appendChild(link);
+
+              skillItem.appendChild(label);
+              skillItem.appendChild(message);
+
+              skillsContainer.appendChild(skillItem);
+
               return;
             }
 
-            let skillsHtml = '<div class="info-item" style="grid-column: 1 / -1;       border-top: 4px solid #2a3f0f;"><label>Skills</label><div style="display: flex;  flex-wrap: wrap; gap: 10px;">';
+            const skillItem = document.createElement('div');
+
+            skillItem.className = 'info-item';
+            skillItem.style.gridColumn = '1 / -1';
+            skillItem.style.borderTop = '4px solid #2a3f0f';
+
+            const label = document.createElement('label');
+            label.textContent = 'Skills';
+
+            const skillsWrapper = document.createElement('div');
+
+            skillsWrapper.style.display = 'flex';
+            skillsWrapper.style.flexWrap = 'wrap';
+            skillsWrapper.style.gap = '10px';
 
             data.skills.forEach(skill => {
-              skillsHtml += `
-        <span style="background-color: #2a3f0f; color: white; padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-          ${skill.skill_name} • ${skill.proficiency}
-        </span>
-      `;
+
+              const skillBadge = document.createElement('span');
+
+              skillBadge.style.backgroundColor = '#2a3f0f';
+              skillBadge.style.color = '#efefef';
+              skillBadge.style.padding = '8px 12px';
+              skillBadge.style.borderRadius = '20px';
+              skillBadge.style.fontSize = '12px';
+              skillBadge.style.fontWeight = '600';
+
+              skillBadge.textContent =
+                `${skill.skill_name} • ${skill.proficiency}`;
+
+              skillsWrapper.appendChild(skillBadge);
             });
 
-            skillsHtml += '</div></div>';
-            skillsContainer.innerHTML = skillsHtml;
+            skillItem.appendChild(label);
+            skillItem.appendChild(skillsWrapper);
+
+            skillsContainer.appendChild(skillItem);
 
           } catch (err) {
             console.error(err);
           }
         }
 
+
         function openEditModal() {
-          document.getElementById('editModal').classList.add('active');
+          document
+            .getElementById('editModal')
+            .classList.add('active');
         }
 
+
         function closeEditModal() {
-          document.getElementById('editModal').classList.remove('active');
+          document
+            .getElementById('editModal')
+            .classList.remove('active');
+
           document.getElementById('editMessage').innerHTML = '';
         }
 
-        document.getElementById('editForm').addEventListener('submit', async (e) => {
-          e.preventDefault();
 
-          const formData = new FormData(e.target);
-          const data = Object.fromEntries(formData);
+        document
+          .getElementById('editForm')
+          .addEventListener('submit', async (e) => {
 
-          try {
-            const response = await fetch('/api/users/student/profile', {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(data)
-            });
+            e.preventDefault();
 
-            const result = await response.json();
-            const messageDiv = document.getElementById('editMessage');
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
 
-            if (response.ok) {
-              messageDiv.className = 'message success';
-              messageDiv.textContent = 'Profile updated successfully!';
-              setTimeout(() => {
-                closeEditModal();
-                loadProfile();
-              }, 1500);
-            } else {
-              messageDiv.className = 'message error';
-              messageDiv.textContent = result.error || 'Failed to update profile';
+            try {
+
+              const response = await fetch(
+                '/api/users/student/profile',
+                {
+                  method: 'PATCH',
+
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                  },
+
+                  body: JSON.stringify(data)
+                }
+              );
+
+              const result = await response.json();
+
+              const messageDiv =
+                document.getElementById('editMessage');
+
+              if (response.ok) {
+
+                messageDiv.className =
+                  'message success';
+
+                messageDiv.textContent =
+                  'Profile updated successfully!';
+
+                setTimeout(() => {
+                  closeEditModal();
+                  loadProfile();
+                }, 1500);
+
+              } else {
+
+                messageDiv.className =
+                  'message error';
+
+                messageDiv.textContent =
+                  result.error ||
+                  'Failed to update profile';
+              }
+
+            } catch (err) {
+
+              console.error(err);
+
+              const messageDiv =
+                document.getElementById('editMessage');
+
+              messageDiv.className =
+                'message error';
+
+              messageDiv.textContent =
+                'Error updating profile';
             }
-          } catch (err) {
-            document.getElementById('editMessage').className = 'message error';
-            document.getElementById('editMessage').textContent = 'Error updating profile';
-          }
-        });
+          });
+
 
         loadProfile();
       </script>

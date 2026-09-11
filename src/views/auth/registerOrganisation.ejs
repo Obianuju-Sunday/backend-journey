@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +11,13 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #efefef;
       color: #1a1a1a;
     }
+
     .container {
       display: flex;
       justify-content: center;
@@ -22,30 +25,35 @@
       min-height: calc(100vh - 200px);
       padding: 40px 20px;
     }
+
     .register-box {
       background-color: white;
       padding: 40px;
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       width: 100%;
       max-width: 500px;
       border-top: 4px solid #2a3f0f;
     }
+
     .register-box h1 {
       color: #2a3f0f;
       margin-bottom: 30px;
       text-align: center;
       font-size: 28px;
     }
+
     .form-group {
       margin-bottom: 20px;
     }
+
     label {
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
       color: #1a1a1a;
     }
+
     input {
       width: 100%;
       padding: 12px;
@@ -53,11 +61,13 @@
       border-radius: 5px;
       font-size: 14px;
     }
+
     input:focus {
       outline: none;
       border-color: #2a3f0f;
       box-shadow: 0 0 5px rgba(43, 63, 15, 1);
     }
+
     .btn {
       width: 100%;
       padding: 12px;
@@ -70,29 +80,35 @@
       cursor: pointer;
       margin-top: 20px;
     }
+
     .btn:hover {
       background-color: #1e3410;
     }
+
     .message {
       margin-top: 15px;
       padding: 10px;
       border-radius: 5px;
       text-align: center;
     }
+
     .success {
       background-color: #d4edda;
       color: #155724;
     }
+
     .error {
       background-color: #f8d7da;
       color: #721c24;
     }
+
     .login-link {
       text-align: center;
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid #e8e8e8;
     }
+
     .login-link a {
       color: #2a3f0f;
       text-decoration: none;
@@ -100,100 +116,102 @@
     }
   </style>
 </head>
+
 <body>
   <%- include('../layouts/navbar') %>
-  
-  <div class="container">
-    <div class="register-box">
-      <h1>Register as Organization</h1>
-      
-      <form id="registerForm">
-        <div class="form-group">
-          <label for="company_name">Company Name</label>
-          <input type="text" id="company_name" name="company_name" required placeholder="Your company name">
-        </div>
 
-        <div class="form-group">
-          <label for="contact_email">Contact Email</label>
-          <input type="email" id="contact_email" name="contact_email" required placeholder="contact@company.com">
-        </div>
-        
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="Min 6 characters">
-        </div>
-        
-        <div class="form-group">
-          <label for="industry">Industry</label>
-          <input type="text" id="industry" name="industry" required placeholder="e.g. Software Development">
-        </div>
+    <div class="container">
+      <div class="register-box">
+        <h1>Register as Organization</h1>
 
-        <div class="form-group">
-          <label for="location">Location</label>
-          <input type="text" id="location" name="location" required placeholder="e.g. Lagos, Nigeria">
-        </div>
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="company_name">Company Name</label>
+            <input type="text" id="company_name" name="company_name" required placeholder="Your company name">
+          </div>
 
-        <div class="form-group">
-          <label for="website">Website</label>
-          <input type="url" id="website" name="website" required placeholder="https://www.company.com">
-        </div>
+          <div class="form-group">
+            <label for="contact_email">Contact Email</label>
+            <input type="email" id="contact_email" name="contact_email" required placeholder="contact@company.com">
+          </div>
 
-        <!-- <div class="form-group">
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required placeholder="Min 6 characters">
+          </div>
+
+          <div class="form-group">
+            <label for="industry">Industry</label>
+            <input type="text" id="industry" name="industry" required placeholder="e.g. Software Development">
+          </div>
+
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" required placeholder="e.g. Lagos, Nigeria">
+          </div>
+
+          <div class="form-group">
+            <label for="website">Website</label>
+            <input type="url" id="website" name="website" required placeholder="https://www.company.com">
+          </div>
+
+          <!-- <div class="form-group">
           <label for="niche">Niche</label>
           <input type="text" id="niche" name="niche" required placeholder="e.g. Web Development">
         </div> -->
 
-        <button type="submit" class="btn">Register Organization</button>
-        <div id="message"></div>
-      </form>
-      
-      <div class="login-link">
-        <p>Already have an account? <a href="/auth/login">Login here</a></p>
+          <button type="submit" class="btn">Register Organization</button>
+          <div id="message"></div>
+        </form>
+
+        <div class="login-link">
+          <p>Already have an account? <a href="/auth/login">Login here</a></p>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <%- include('../layouts/footer') %>
-  
-  <script>
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const formData = {
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value,
-        company_name: document.getElementById('company_name').value,
-        industry: document.getElementById('industry').value,
-        location: document.getElementById('location').value,
-        website: document.getElementById('website').value
-      };
-      
-      try {
-        const response = await fetch('/api/auth/register/organisation', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
+
+    <%- include('../layouts/footer') %>
+
+      <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const formData = {
+            email: document.getElementById('contact_email').value,
+            password: document.getElementById('password').value,
+            company_name: document.getElementById('company_name').value,
+            industry: document.getElementById('industry').value,
+            location: document.getElementById('location').value,
+            website: document.getElementById('website').value
+          };
+
+          try {
+            const response = await fetch('/api/auth/register/organisation', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              const messageDiv = document.getElementById('message');
+              messageDiv.className = 'message success';
+              messageDiv.textContent = 'Registration successful! Redirecting to login...';
+
+              setTimeout(() => {
+                window.location.href = '/auth/login';
+              }, 1500);
+            } else {
+              document.getElementById('message').className = 'message error';
+              document.getElementById('message').textContent = data.error || 'Registration failed';
+            }
+          } catch (err) {
+            document.getElementById('message').className = 'message error';
+            document.getElementById('message').textContent = 'Error connecting to server';
+          }
         });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          const messageDiv = document.getElementById('message');
-          messageDiv.className = 'message success';
-          messageDiv.textContent = 'Registration successful! Redirecting to login...';
-          
-          setTimeout(() => {
-            window.location.href = '/auth/login';
-          }, 1500);
-        } else {
-          document.getElementById('message').className = 'message error';
-          document.getElementById('message').textContent = data.error || 'Registration failed';
-        }
-      } catch (err) {
-        document.getElementById('message').className = 'message error';
-        document.getElementById('message').textContent = 'Error connecting to server';
-      }
-    });
-  </script>
+      </script>
 </body>
+
 </html>

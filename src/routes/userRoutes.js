@@ -11,6 +11,8 @@ router.get('/organisation/profile', authMiddleware,  isOrganisation,  getOrgProf
 router.patch('/organisation/profile', authMiddleware, isOrganisation, updateOrgProfileValidator, updateOrgProfile);
 
 
+// internshipRoutes.js
+
 // Public - view profiles
 router.get('/student/profile/:id', getStudentProfilePublic);
 router.get('/organisation/profile/:id', getOrgProfilePublic);

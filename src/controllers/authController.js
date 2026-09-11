@@ -5,14 +5,15 @@ const pool = require('../config/db');
 
 // Register Student
 const registerStudent = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { email, password, full_name, program, year, university, bio, phone, location, portfolio_link } = req.body;
-
   try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password, full_name, program, year, university, bio, phone, location, portfolio_link } = req.body;
+
     // Check if user exists
     const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (userExists.rows.length > 0) {
@@ -53,6 +54,18 @@ const registerStudent = async (req, res) => {
 // Register Organisation
 const registerOrganisation = async (req, res) => {
   const errors = validationResult(req);
+
+  req.body.email = req.sanitize(req.body.email);
+  req.body.password = req.sanitize(req.body.password);
+  req.body.company_name = req.sanitize(req.body.company_name);
+  req.body.industry = req.sanitize(req.body.industry);
+  req.body.location = req.sanitize(req.body.location);
+  req.body.website = req.sanitize(req.body.website);
+  req.body.niche = req.sanitize(req.body.niche);
+  req.body.description = req.sanitize(req.body.description);
+  req.body.contact_email = req.sanitize(req.body.contact_email);
+
+
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
@@ -83,13 +96,14 @@ const registerOrganisation = async (req, res) => {
       [userId, company_name, industry, niche || null, description || null, website || null, contact_email || null, location || null]
     );
 
-    res.status(201).json({ message: 'Organisation registered. Awaiting admin approval.',
+    res.status(201).json({
+      message: 'Organisation registered. Awaiting admin approval.',
       user: {
         id: userId,
         email,
         role: 'organisation',
       }
-     });
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -122,7 +136,7 @@ const login = async (req, res) => {
 
     // Get profile data based on role 
     let profileData = {};
-    
+
     if (user.role === 'student') {
       const studentProfile = await pool.query(
         'SELECT full_name FROM student_profiles WHERE user_id = $1',
@@ -160,7 +174,7 @@ const login = async (req, res) => {
         company_name: profileData.company_name
       }
     });
-  } catch (err) { 
+  } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }

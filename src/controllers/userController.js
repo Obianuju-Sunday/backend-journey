@@ -155,7 +155,7 @@ const updateStudentProfile = async (req, res) => {
 
     for (const [key, value] of Object.entries(req.body)) {
       if (allowedFields.includes(key)) {
-        updateData[key] = value;
+        updateData[key] = req.sanitize(value);
       }
     }
 
@@ -197,7 +197,7 @@ const updateOrgProfile = async (req, res) => {
 
     for (const [key, value] of Object.entries(req.body)) {
       if (allowedFields.includes(key)) {
-        updateData[key] = value;
+        updateData[key] = req.sanitize(value);
       }
     }
 
