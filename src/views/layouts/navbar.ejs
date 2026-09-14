@@ -1,14 +1,15 @@
-<nav style="background-color: #2a3f0f; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+<nav
+  style="background-color: #2a3f0f; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
   <a href="/" style="color: #efefef; font-size: 24px; font-weight: bold; text-decoration: none;">B E A C O N</a>
-  
+
   <div style="display: flex; gap: 20px; align-items: center;" id="navbarContent">
     <!-- Content will be filled by JavaScript -->
   </div>
 </nav>
 
 <script>
-  const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const token = sessionStorage.getItem('token');
+  const user = JSON.parse(sessionStorage.getItem('user') || 'null');
   const navbarContent = document.getElementById('navbarContent');
   const currentPath = window.location.pathname;
 
@@ -57,7 +58,7 @@
   }
 
   function logout() {
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = '/';
   }
 </script>

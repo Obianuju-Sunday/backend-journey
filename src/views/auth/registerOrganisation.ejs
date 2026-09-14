@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register as Organization - Beacon</title>
+  <title>Register Organization - B E A C O N</title>
   <style>
     * {
       margin: 0;
@@ -131,13 +131,13 @@
           </div>
 
           <div class="form-group">
-            <label for="contact_email">Contact Email</label>
-            <input type="email" id="contact_email" name="contact_email" required placeholder="contact@company.com">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="email@company.com">
           </div>
 
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required placeholder="Min 6 characters">
+            <input type="password" id="password" name="password" required placeholder="Min 8 characters">
           </div>
 
           <div class="form-group">
@@ -177,7 +177,7 @@
           e.preventDefault();
 
           const formData = {
-            email: document.getElementById('contact_email').value,
+            email: document.getElementById('email').value,
             password: document.getElementById('password').value,
             company_name: document.getElementById('company_name').value,
             industry: document.getElementById('industry').value,

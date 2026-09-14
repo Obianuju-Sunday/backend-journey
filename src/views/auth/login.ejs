@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Internship Portal</title>
+  <title>Login - B E A C O N</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #efefef;
       color: #1a1a1a;
     }
+
     .container {
       display: flex;
       justify-content: center;
@@ -22,30 +25,35 @@
       min-height: calc(100vh - 200px);
       padding: 40px 20px;
     }
+
     .login-box {
       background-color: white;
       padding: 40px;
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       width: 100%;
       max-width: 400px;
       border-top: 4px solid #2a3f0f;
     }
+
     .login-box h1 {
       color: #2a3f0f;
       margin-bottom: 30px;
       text-align: center;
       font-size: 28px;
     }
+
     .form-group {
       margin-bottom: 20px;
     }
+
     label {
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
       color: #1a1a1a;
     }
+
     input {
       width: 100%;
       padding: 12px;
@@ -53,14 +61,16 @@
       border-radius: 5px;
       font-size: 14px;
     }
+
     input:focus {
       outline: none;
       border-color: #2a3f0f;
       box-shadow: 0 0 5px rgba(43, 63, 15, 1);
     }
+
     .btn {
       width: 100%;
-      padding: 12px; 
+      padding: 12px;
       background-color: #2a3f0f;
       color: #efefef;
       border: none;
@@ -70,111 +80,120 @@
       cursor: pointer;
       margin-top: 20px;
     }
+
     .btn:hover {
       background-color: #1e3410;
     }
+
     .message {
       margin-top: 15px;
       padding: 10px;
       border-radius: 5px;
       text-align: center;
     }
+
     .success {
       background-color: #d4edda;
       color: #155724;
     }
+
     .error {
       background-color: #f8d7da;
       color: #721c24;
     }
+
     .register-link {
       text-align: center;
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid #e8e8e8;
     }
+
     .register-link a {
       color: #2a3f0f;
       text-decoration: none;
       font-weight: 600;
     }
+
     .register-link a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
+
 <body>
   <%- include('../layouts/navbar') %>
-  
-  <div class="container">
-    <div class="login-box">
-      <h1>Login</h1>
-      
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" required placeholder="your@email.com">
+
+    <div class="container">
+      <div class="login-box">
+        <h1>Login</h1>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required placeholder="your@email.com">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required placeholder="Enter your password">
+          </div>
+
+          <button type="submit" class="btn">Login</button>
+          <div id="message"></div>
+        </form>
+
+        <div class="register-link">
+          <p>Don't have an account?</p>
+          <a href="/auth/register/student">Register as Student</a> |
+          <a href="/auth/register/organisation">Register as Organization</a>
         </div>
-        
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="Enter your password">
-        </div>
-        
-        <button type="submit" class="btn">Login</button>
-        <div id="message"></div>
-      </form>
-      
-      <div class="register-link">
-        <p>Don't have an account?</p>
-        <a href="/auth/register-student">Register as Student</a> | 
-        <a href="/auth/register-organisation">Register as Organization</a>
       </div>
     </div>
-  </div>
-  
-  <%- include('../layouts/footer') %>
-  
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      try {
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          
-          const messageDiv = document.getElementById('message');
-          messageDiv.className = 'message success';
-          messageDiv.textContent = 'Login successful! Redirecting...';
-          
-          setTimeout(() => {
-            if (data.user.role === 'student') {
-              window.location.href = '/student/browse-internship';
+
+    <%- include('../layouts/footer') %>
+
+      <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          try {
+            const response = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              sessionStorage.setItem('token', data.token);
+              sessionStorage.setItem('user', JSON.stringify(data.user));
+
+              const messageDiv = document.getElementById('message');
+              messageDiv.className = 'message success';
+              messageDiv.textContent = 'Login successful! Redirecting...';
+
+              setTimeout(() => {
+                if (data.user.role === 'student') {
+                  window.location.href = '/student/browse-internship';
+                } else {
+                  window.location.href = '/org/dashboard';
+                }
+              }, 1500);
             } else {
-              window.location.href = '/org/dashboard';
+              document.getElementById('message').className = 'message error';
+              document.getElementById('message').textContent = data.error || 'Login failed';
             }
-          }, 1500);
-        } else {
-          document.getElementById('message').className = 'message error';
-          document.getElementById('message').textContent = data.error || 'Login failed';
-        }
-      } catch (err) {
-        document.getElementById('message').className = 'message error';
-        document.getElementById('message').textContent = 'Error connecting to server';
-      }
-    });
-  </script>
+          } catch (err) {
+            document.getElementById('message').className = 'message error';
+            document.getElementById('message').textContent = 'Error connecting to server';
+          }
+        });
+      </script>
 </body>
+
 </html>

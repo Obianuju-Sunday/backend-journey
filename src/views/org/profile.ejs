@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Organization Profile - Internship Portal</title>
+  <title>Organization Profile - B E A C O N</title>
   <style>
     * {
       margin: 0;
@@ -209,8 +209,8 @@
           </div>
 
           <div class="form-group">
-            <label>Contact Email</label>
-            <input type="email" id="editContactEmail" name="contact_email">
+            <label>Email</label>
+            <input type="email" id="editEmail" name="email">
           </div>
 
           <div class="form-group">
@@ -275,8 +275,8 @@
               <span>${profile.company_name || 'Not set'}</span>
             </div>
             <div class="info-item">
-              <label>Contact Email</label>
-              <span>${profile.contact_email}</span>
+              <label>Email</label>
+              <span>${profile.email || 'Not set'}</span>
             </div>
             <div class="info-item">
               <label>Industry</label>
@@ -307,7 +307,7 @@
               document.getElementById('editLocation').value = profile.location || '';
               document.getElementById('editDescription').value = profile.description || '';
               document.getElementById('editNiche').value = profile.niche || '';
-              document.getElementById('editContactEmail').value = profile.contact_email || '';
+              document.getElementById('editEmail').value = profile.email || '';
             } else {
               container.innerHTML = '<p style="color: red;">Error loading profile</p>';
             }

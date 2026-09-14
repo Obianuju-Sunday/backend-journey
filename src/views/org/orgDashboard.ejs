@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Organization Dashboard - Internship Portal</title>
+  <title>Organization Dashboard - B E A C O N</title>
   <style>
     * {
       margin: 0;
@@ -572,8 +572,8 @@
 
           ${app.status === 'pending' ? `
             <div class="app-buttons">
-              <button class="action-btn accept-btn" onclick="updateStatus(${app.id}, 'accepted')">✓ Accept</button>
-              <button class="action-btn reject-btn" onclick="updateStatus(${app.id}, 'rejected')">✗ Reject</button>
+              <button class="action-btn accept-btn" onclick="updateStatus(${app.id}, 'accepted')">Accept</button>
+              <button class="action-btn reject-btn" onclick="updateStatus(${app.id}, 'rejected')">Reject</button>
             </div>
           ` : `
             <div style="color: #999; font-size: 12px; margin-top: 10px;">Already ${app.status}</div>
