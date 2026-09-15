@@ -1,34 +1,73 @@
-<nav style="background-color: #2a3f0f; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+<nav
+  style="background-color: #2a3f0f; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+
   <a href="/" style="color: #efefef; font-size: 24px; font-weight: bold; text-decoration: none;">
     B E A C O N
   </a>
 
-  <!-- Hamburger / Close Icon (Mobile Only) -->
-  <button
-    id="menuBtn"
-    style="display: none; background: none; border: none; color: #efefef; font-size: 28px; cursor: pointer;"
-  >
-    ☰
+  <!-- Hamburger / Close Button -->
+  <button id="menuBtn" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
   </button>
 
-  <div
-    style="display: flex; gap: 20px; align-items: center;"
-    id="navbarContent"
-  >
+  <div style="display: flex; gap: 20px; align-items: center;" id="navbarContent">
     <!-- Content will be filled by JavaScript -->
   </div>
+
 </nav>
 
+
 <style>
+  #menuBtn {
+    display: none;
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    position: relative;
+  }
+
+  /* Hamburger lines */
+  #menuBtn span {
+    display: block;
+    width: 26px;
+    height: 2px;
+    background-color: #efefef;
+    margin: 6px auto;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  #menuBtn.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  #menuBtn.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  #menuBtn.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+
   @media (max-width: 768px) {
+
     nav {
       padding: 15px 20px !important;
     }
 
+    /* Show the hamburger button on mobile */
     #menuBtn {
       display: block !important;
     }
 
+    /* hide the navbar content on mobile by default */
     #navbarContent {
       display: none !important;
       position: absolute;
@@ -64,6 +103,7 @@
   }
 </style>
 
+
 <script>
   const token = sessionStorage.getItem('token');
   const user = JSON.parse(sessionStorage.getItem('user') || 'null');
@@ -72,36 +112,62 @@
   const menuBtn = document.getElementById('menuBtn');
   const currentPath = window.location.pathname;
 
-  // Hamburger / Close button toggle
+
+  // Hamburger / Close button
   menuBtn.addEventListener('click', () => {
+
     const isOpen = navbarContent.classList.toggle('active');
 
-    menuBtn.textContent = isOpen ? 'X' : '☰';
+    menuBtn.classList.toggle('active', isOpen);
+
   });
+
 
   // Close menu when a link is clicked
   navbarContent.addEventListener('click', (e) => {
+
     if (e.target.tagName === 'A') {
+
       navbarContent.classList.remove('active');
-      menuBtn.textContent = '☰';
+
+      menuBtn.classList.remove('active');
+
     }
+
   });
 
+
   if (token && user) {
+
+    // STUDENT NAVIGATION
 
     if (user.role === 'student') {
 
       const links = [
-        { href: '/student/browse-internship', text: 'Browse' },
-        { href: '/student/skill-profile', text: 'My Skills' },
-        { href: '/student/my-applications', text: 'Applications' },
-        { href: '/student/student-profile', text: 'Profile' }
+        {
+          href: '/student/browse-internship',
+          text: 'Browse'
+        },
+        {
+          href: '/student/skill-profile',
+          text: 'My Skills'
+        },
+        {
+          href: '/student/my-applications',
+          text: 'Applications'
+        },
+        {
+          href: '/student/student-profile',
+          text: 'Profile'
+        }
       ];
 
       let html = '';
 
       links.forEach(link => {
+
         if (currentPath !== link.href) {
+
           html += `
             <a
               href="${link.href}"
@@ -110,13 +176,24 @@
               ${link.text}
             </a>
           `;
+
         }
+
       });
+
 
       html += `
         <button
           onclick="logout()"
-          style="background-color: #c41e3a; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
+          style="
+            background-color: #c41e3a;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+          "
         >
           Logout
         </button>
@@ -124,44 +201,76 @@
 
       navbarContent.innerHTML = html;
 
-    } else if (user.role === 'organisation') {
-
-      const links = [
-        { href: '/org/dashboard', text: 'Dashboard' },
-        { href: '/org/internship-applications', text: 'Applications' },
-        { href: '/org/profile', text: 'Profile' }
-      ];
-
-      let html = '';
-
-      links.forEach(link => {
-        if (currentPath !== link.href) {
-          html += `
-            <a
-              href="${link.href}"
-              style="color: #efefef; text-decoration: none; font-weight: 600;"
-            >
-              ${link.text}
-            </a>
-          `;
-        }
-      });
-
-      html += `
-        <button
-          onclick="logout()"
-          style="background-color: #c41e3a; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
-        >
-          Logout
-        </button>
-      `;
-
-      navbarContent.innerHTML = html;
     }
 
-  } else {
+
+    //  ORGANISATION NAVIGATION
+
+    else if (user.role === 'organisation') {
+
+      const links = [
+        {
+          href: '/org/dashboard',
+          text: 'Dashboard'
+        },
+        {
+          href: '/org/internship-applications',
+          text: 'Applications'
+        },
+        {
+          href: '/org/profile',
+          text: 'Profile'
+        }
+      ];
+
+      let html = '';
+
+      links.forEach(link => {
+
+        if (currentPath !== link.href) {
+
+          html += `
+            <a
+              href="${link.href}"
+              style="color: #efefef; text-decoration: none; font-weight: 600;"
+            >
+              ${link.text}
+            </a>
+          `;
+
+        }
+
+      });
+
+
+      html += `
+        <button
+          onclick="logout()"
+          style="
+            background-color: #c41e3a;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+          "
+        >
+          Logout
+        </button>
+      `;
+
+      navbarContent.innerHTML = html;
+
+    }
+
+  }
+
+  //  LOGGED OUT NAVIGATION
+  else {
 
     navbarContent.innerHTML = `
+
       <a
         href="/auth/login"
         style="color: #efefef; text-decoration: none; font-weight: 600;"
@@ -182,11 +291,16 @@
       >
         Register Org
       </a>
+
     `;
+
   }
 
   function logout() {
+
     sessionStorage.clear();
+
     window.location.href = '/';
+
   }
 </script>
