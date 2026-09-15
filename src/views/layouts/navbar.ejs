@@ -1,21 +1,96 @@
-<nav
-  style="background-color: #2a3f0f; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-  <a href="/" style="color: #efefef; font-size: 24px; font-weight: bold; text-decoration: none;">B E A C O N</a>
+<nav style="background-color: #2a3f0f; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+  <a href="/" style="color: #efefef; font-size: 24px; font-weight: bold; text-decoration: none;">
+    B E A C O N
+  </a>
 
-  <div style="display: flex; gap: 20px; align-items: center;" id="navbarContent">
+  <!-- Hamburger / Close Icon (Mobile Only) -->
+  <button
+    id="menuBtn"
+    style="display: none; background: none; border: none; color: #efefef; font-size: 28px; cursor: pointer;"
+  >
+    ☰
+  </button>
+
+  <div
+    style="display: flex; gap: 20px; align-items: center;"
+    id="navbarContent"
+  >
     <!-- Content will be filled by JavaScript -->
   </div>
 </nav>
 
+<style>
+  @media (max-width: 768px) {
+    nav {
+      padding: 15px 20px !important;
+    }
+
+    #menuBtn {
+      display: block !important;
+    }
+
+    #navbarContent {
+      display: none !important;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background-color: #1e3410;
+      flex-direction: column !important;
+      padding: 15px !important;
+    }
+
+    #navbarContent.active {
+      display: flex !important;
+    }
+
+    #navbarContent a,
+    #navbarContent button {
+      padding: 12px 15px !important;
+      width: 100%;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #navbarContent a:last-child,
+    #navbarContent button:last-child {
+      border-bottom: none;
+    }
+
+    #navbarContent button {
+      margin: 0 !important;
+      width: 100%;
+    }
+  }
+</style>
+
 <script>
   const token = sessionStorage.getItem('token');
   const user = JSON.parse(sessionStorage.getItem('user') || 'null');
+
   const navbarContent = document.getElementById('navbarContent');
+  const menuBtn = document.getElementById('menuBtn');
   const currentPath = window.location.pathname;
 
+  // Hamburger / Close button toggle
+  menuBtn.addEventListener('click', () => {
+    const isOpen = navbarContent.classList.toggle('active');
+
+    menuBtn.textContent = isOpen ? 'X' : '☰';
+  });
+
+  // Close menu when a link is clicked
+  navbarContent.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+      navbarContent.classList.remove('active');
+      menuBtn.textContent = '☰';
+    }
+  });
+
   if (token && user) {
+
     if (user.role === 'student') {
-      // Create links array
+
       const links = [
         { href: '/student/browse-internship', text: 'Browse' },
         { href: '/student/skill-profile', text: 'My Skills' },
@@ -23,17 +98,34 @@
         { href: '/student/student-profile', text: 'Profile' }
       ];
 
-      // Build navbar but skip the current page
       let html = '';
+
       links.forEach(link => {
         if (currentPath !== link.href) {
-          html += `<a href="${link.href}" style="color: #efefef; text-decoration: none; font-weight: 600;">${link.text}</a>`;
+          html += `
+            <a
+              href="${link.href}"
+              style="color: #efefef; text-decoration: none; font-weight: 600;"
+            >
+              ${link.text}
+            </a>
+          `;
         }
       });
-      html += `<button onclick="logout()" style="background-color: #c41e3a; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;">Logout</button>`;
+
+      html += `
+        <button
+          onclick="logout()"
+          style="background-color: #c41e3a; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
+        >
+          Logout
+        </button>
+      `;
+
       navbarContent.innerHTML = html;
 
     } else if (user.role === 'organisation') {
+
       const links = [
         { href: '/org/dashboard', text: 'Dashboard' },
         { href: '/org/internship-applications', text: 'Applications' },
@@ -41,19 +133,55 @@
       ];
 
       let html = '';
+
       links.forEach(link => {
         if (currentPath !== link.href) {
-          html += `<a href="${link.href}" style="color: #efefef; text-decoration: none; font-weight: 600;">${link.text}</a>`;
+          html += `
+            <a
+              href="${link.href}"
+              style="color: #efefef; text-decoration: none; font-weight: 600;"
+            >
+              ${link.text}
+            </a>
+          `;
         }
       });
-      html += `<button onclick="logout()" style="background-color: #c41e3a; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;">Logout</button>`;
+
+      html += `
+        <button
+          onclick="logout()"
+          style="background-color: #c41e3a; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;"
+        >
+          Logout
+        </button>
+      `;
+
       navbarContent.innerHTML = html;
     }
+
   } else {
+
     navbarContent.innerHTML = `
-      <a href="/auth/login" style="color: #efefef; text-decoration: none; font-weight: 600;">Login</a>
-      <a href="/auth/register/student" style="color: #efefef; text-decoration: none; font-weight: 600;">Register Student</a>
-      <a href="/auth/register/organisation" style="color: #efefef; text-decoration: none; font-weight: 600;">Register Org</a>
+      <a
+        href="/auth/login"
+        style="color: #efefef; text-decoration: none; font-weight: 600;"
+      >
+        Login
+      </a>
+
+      <a
+        href="/auth/register/student"
+        style="color: #efefef; text-decoration: none; font-weight: 600;"
+      >
+        Register Student
+      </a>
+
+      <a
+        href="/auth/register/organisation"
+        style="color: #efefef; text-decoration: none; font-weight: 600;"
+      >
+        Register Org
+      </a>
     `;
   }
 

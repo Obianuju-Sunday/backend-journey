@@ -55,22 +55,12 @@ const registerStudent = async (req, res) => {
 const registerOrganisation = async (req, res) => {
   const errors = validationResult(req);
 
-  req.body.email = req.sanitize(req.body.email);
-  req.body.password = req.sanitize(req.body.password);
-  req.body.company_name = req.sanitize(req.body.company_name);
-  req.body.industry = req.sanitize(req.body.industry);
-  req.body.location = req.sanitize(req.body.location);
-  req.body.website = req.sanitize(req.body.website);
-  req.body.niche = req.sanitize(req.body.niche);
-  req.body.description = req.sanitize(req.body.description);
-  req.body.contact_email = req.sanitize(req.body.contact_email);
-
 
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { email, password, company_name, industry, niche, description, website, contact_email, location } = req.body;
+  const { email, password, company_name, industry, niche, description, website, location } = req.body;
 
   try {
     // Check if user exists
@@ -85,15 +75,15 @@ const registerOrganisation = async (req, res) => {
     // Insert user (approved = false for orgs)
     const newUser = await pool.query(
       'INSERT INTO users (email, password, role, approved) VALUES ($1, $2, $3, $4) RETURNING *',
-      [email, hashedPassword, 'organisation', false]
+      [email, hashedPassword, 'organisation', true]
     );
 
     const userId = newUser.rows[0].id;
 
     // Insert org profile
     await pool.query(
-      'INSERT INTO organisation_profiles (user_id, company_name, industry, niche, description, website, contact_email, location) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-      [userId, company_name, industry, niche || null, description || null, website || null, contact_email || null, location || null]
+      'INSERT INTO organisation_profiles (user_id, company_name, industry, niche, description, website, location) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+      [userId, company_name, industry, niche || null, description || null, website || null, location || null]
     );
 
     res.status(201).json({

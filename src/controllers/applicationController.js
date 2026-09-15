@@ -107,7 +107,22 @@ const getOrgApplications = async (req, res) => {
       [orgId]
     );
 
-    res.status(200).json({ applications: applications.rows });
+    const cleanApplications = applications.rows.map(app => ({
+      application_id: app.id,            
+      student_name: app.full_name,
+      student_email: app.student_email,
+      program: app.program,
+      phone: app.phone,
+      portfolio_link: app.portfolio_link,
+      internship_title: app.internship_title,
+      cover_letter: app.cover_letter,
+      status: app.status,
+      applied_at: app.applied_at
+    }));
+
+    res.status(200).json({
+      applications: cleanApplications
+    });
 
   } catch (err) {
     console.error(err);

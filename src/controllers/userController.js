@@ -107,8 +107,20 @@ const getOrgProfile = async (req, res) => {
   try {
     const userId = req.user.userId;
 
+    // ✅ JOIN users table to get email
     const profile = await pool.query(
-      'SELECT id, company_name, industry, niche, description, website, contact_email, location, created_at FROM organisation_profiles WHERE user_id = $1',
+      `SELECT 
+        op.id,
+        op.company_name,
+        op.industry,
+        op.location,
+        op.website,
+        op.niche,
+        op.description,
+        u.email
+       FROM organisation_profiles op
+       JOIN users u ON op.user_id = u.id
+       WHERE op.user_id = $1`,
       [userId]
     );
 
@@ -116,10 +128,10 @@ const getOrgProfile = async (req, res) => {
       return res.status(404).json({ error: 'Profile not found' });
     }
 
-    return res.status(200).json(profile.rows[0]);
+    res.json(profile.rows[0]);
 
   } catch (err) {
-    console.error('Error getting org profile', err);
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -155,7 +167,7 @@ const updateStudentProfile = async (req, res) => {
 
     for (const [key, value] of Object.entries(req.body)) {
       if (allowedFields.includes(key)) {
-        updateData[key] = req.sanitize(value);
+        updateData[key] = value;
       }
     }
 
@@ -197,7 +209,7 @@ const updateOrgProfile = async (req, res) => {
 
     for (const [key, value] of Object.entries(req.body)) {
       if (allowedFields.includes(key)) {
-        updateData[key] = req.sanitize(value);
+        updateData[key] = value;
       }
     }
 

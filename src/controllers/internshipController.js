@@ -184,10 +184,6 @@ const deleteInternship = async (req, res) => {
   }
 };
 
-// const getInternshipApplicationCount = async (req, res) => {
-// Built into getOrgInternships function above
-// }
-
 module.exports = {
   createInternship,
   getAllInternships,
@@ -195,5 +191,4 @@ module.exports = {
   getInternshipById,
   updateInternship,
   deleteInternship,
-  // getInternshipApplicationCount
 };

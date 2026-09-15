@@ -345,7 +345,7 @@
     <div class="container">
       <div class="header">
         <h1>Organization Dashboard</h1>
-        <button class="btn-primary" onclick="openPostModal()">+ Post New Internship</button>
+        <button class="btn-primary" onclick="openPostModal()">+ New Internship</button>
       </div>
 
       <div id="internshipsList">
@@ -455,7 +455,7 @@
               <h3>${internship.title}</h3>
               <div class="internship-info"><strong>Location:</strong> ${internship.location}</div>
               <div class="app-count">${internship.application_count || 0} Applications</div>
-              <div class="internship-info">${internship.description.substring(0, 100)}...</div>
+              <div class="internship-info">${internship.description}</div>
               <div class="action-buttons">
                 <button class="btn-small btn-view" onclick="viewApplications(${internship.id}, '${internship.title.replace(/'/g, "\\'")}')">View Applications</button>
                 <button class="btn-small btn-edit">Edit</button>

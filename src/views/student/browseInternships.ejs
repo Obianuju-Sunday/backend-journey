@@ -312,7 +312,7 @@
           <p><strong>Location:</strong> ${internship.location}</p>
           <p><strong>Duration:</strong> ${internship.duration || 'N/A'}</p>
           <p><strong>Stipend:</strong> ${internship.stipend || 'N/A'}</p>
-          <p>${internship.description.substring(0, 100)}...</p>
+          <p>${internship.description}</p>
           
           ${alreadyApplied ? `
             <button class="apply-btn" style="background-color: #6c757d; cursor: not-allowed;" disabled>
