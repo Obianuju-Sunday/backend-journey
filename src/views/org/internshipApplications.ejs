@@ -240,14 +240,14 @@
                         });
 
                         if (response.ok) {
-                            alert(`✅ Application ${newStatus}!`);
-                            loadApplications(); // Reload
+                            alert(`Application ${newStatus}!`);
+                            loadApplications();
                         } else {
                             const data = await response.json();
-                            alert(`❌ Error: ${data.error}`);
+                            alert(`Error: ${data.error}`);
                         }
                     } catch (err) {
-                        alert('❌ Error updating status');
+                        alert('Error updating status');
                     }
                 }
 
