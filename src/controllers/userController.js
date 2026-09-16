@@ -63,6 +63,8 @@ const getStudentProfilePublic = async (req, res) => {
           sp.full_name,
           sp.program,
           sp.year,
+          sp.phone,
+          sp.location,
           sp.bio,
           sp.university,
           sp.portfolio_link,
@@ -107,7 +109,7 @@ const getOrgProfile = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    // ✅ JOIN users table to get email
+    // JOIN users table to get email
     const profile = await pool.query(
       `SELECT 
         op.id,
