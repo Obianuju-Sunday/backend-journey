@@ -108,7 +108,7 @@ const updateStudentSkill = async (req, res) => {
 
 
     if (!['beginner', 'intermediate', 'advanced'].includes(proficiency)) {
-      return res.status(404).json({
+      return res.status(400).json({
         error: 'Proficiency level can only be beginner, intermediate or advanced.'
       })
     }

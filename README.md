@@ -14,7 +14,7 @@ A full-stack web application connecting students with internship opportunities. 
 - **Internship Management** - Organizations can post, edit, and manage internship listings
 - **Application System** - Students can browse internships and apply with cover letters
 - **Application Tracking** - View application status (pending/accepted/rejected)
-- **Responsive UI** - Clean gradient design that works on desktop and mobile
+- **Responsive UI** - Clean minimal design that works on desktop and mobile
 
 ##  Tech Stack
 
@@ -27,7 +27,7 @@ A full-stack web application connecting students with internship opportunities. 
 
 **Frontend:**
 - EJS (Embedded JavaScript Templates)
-- CSS3 (Custom gradient designs)
+- CSS3 (Custom minimal designs)
 - Vanilla JavaScript
 
 **Deployment:**
