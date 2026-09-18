@@ -132,8 +132,6 @@ Use these accounts to test the application:
 ![Organization applications](images/org-applications.png)
 ![Student skill profile](images/student-skill-profile.png)
 ![Organization student profile](images/org-student-profile.png)
-![Internship applications](images/internship-applications.png)
-
 
 ##  Key Learning Outcomes
 
