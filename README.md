@@ -130,7 +130,7 @@ Use these accounts to test the application:
 ![Organization profile](images/org-profile.png)
 ![My applications](images/my-applications.png)
 ![Organization applications](images/org-applications.png)
-![Student skill profile](images/skill-profile.png)
+![Student skill profile](images/student-skill-profile.png)
 ![Organization student profile](images/org-student-profile.png)
 ![Internship applications](images/internship-applications.png)
 
